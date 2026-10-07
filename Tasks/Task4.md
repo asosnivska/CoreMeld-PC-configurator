@@ -253,7 +253,7 @@ View містить бічну панель фільтрів, поле пошу�
 2. **ConfiguratorEngine (Business Logic Layer)** виступає фасадом. Він не працює з базой напряму, а делегує розрахунки сервісам CompatibilityChecker та BudgetCalculator, а вибірку даних — через інтерфейси репозиторіїв (IComponentRepository, ICpuRepository тощо).
 3. **Репозиторії (Data Access Layer)** реалізують інтерфейси BLL і використовують DbConnectionManager (Singleton) для виконання SQL-запитів через чистий ADO.NET.
 
-<img width="8192" height="3310" alt="Component Build Architecture-2026-10-01-184141" src="https://github.com/user-attachments/assets/23710d34-7880-45fb-a516-e6b3174b3717" />
+<img width="8192" height="3723" alt="Component Build Architecture-2026-10-01-185931" src="https://github.com/user-attachments/assets/469ec9c0-fa06-4f64-ae69-992e601dcd93" />
 
 ---
 
@@ -265,7 +265,7 @@ View містить бічну панель фільтрів, поле пошу�
 - **Спеціалізовані таблиці характеристик:** cpus, motherboards, gpus, ram_modules, power_supplies, cases, storage_drives. Вони зв'язані з components за принципом 1:1 через component_id (Primary Key + Foreign Key).
 - **Таблицю збережених збірок:** builds та проміжну таблицю build_components (багато-до-багатьох) для збереження готових ПК.
 
-<img width="8192" height="3723" alt="Component Build Architecture-2026-10-01-185931" src="https://github.com/user-attachments/assets/469ec9c0-fa06-4f64-ae69-992e601dcd93" />
+<img width="8192" height="3310" alt="Component Build Architecture-2026-10-01-184141" src="https://github.com/user-attachments/assets/23710d34-7880-45fb-a516-e6b3174b3717" />
 
 ---
 
