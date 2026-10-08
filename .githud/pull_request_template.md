@@ -1,6 +1,9 @@
 ## Description
 Please briefly describe the changes made in this PR and the problem it solves.
 
+## Опис українською
+Будь ласка, коротко опишіть зміни, зроблені у цьому ПР, і які проблеми він вирішує.
+
 ## Related Issues
 - Closes # (specify issue number)
 
