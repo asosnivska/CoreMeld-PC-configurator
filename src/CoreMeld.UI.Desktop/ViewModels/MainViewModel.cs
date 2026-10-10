@@ -6,7 +6,7 @@ namespace CoreMeld.UI.Desktop.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private ViewModelBase _currentViewModel = new StartViewModel();
+        private ViewModelBase _currentViewModel = new ResultViewModel();
 
         public ViewModelBase CurrentViewModel
         {
