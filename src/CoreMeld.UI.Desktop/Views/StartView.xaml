@@ -1,0 +1,140 @@
+﻿<UserControl x:Class="CoreMeld.UI.Desktop.Views.StartView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CoreMeld.UI.Desktop.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="1440">
+    
+    <UserControl.Resources>
+        <Style x:Key="InfoIcon" TargetType="TextBlock">
+            <Setter Property="Text" Value="ⓘ"/>
+            <Setter Property="Foreground" Value="{StaticResource InfoBrush}"/>
+            <Setter Property="Margin" Value="8,0,0,0"/>
+            <Setter Property="Cursor" Value="Help"/>
+        </Style>
+        <Style x:Key="AddButton" TargetType="Button">
+            <Setter Property="Width" Value="90"/>
+            <Setter Property="Height" Value="16"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Margin" Value="99,0,0,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="#DADADA" CornerRadius="8">
+                            <TextBlock Text="+" Foreground="White" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Style="{StaticResource HeaderBar}">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="169,0,0,0">
+                <TextBlock Text="COREMELD" Style="{StaticResource LogoTitle}"/>
+                <TextBlock Text="PC CONFIGURATOR" Style="{StaticResource LogoSubtitle}"
+                           VerticalAlignment="Bottom" Margin="10,0,0,4"/>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Border Background="{StaticResource PanelBrush}" MaxWidth="742"
+            Margin="30,36,30,60" Padding="30,24,30,40">
+                <StackPanel>
+
+                    <TextBlock Text="Створіть свій ідеальний ПК" Style="{StaticResource PageTitle}"/>
+                    <TextBlock Text="Заповніть усі дані, щоб конфігурація була збалансована відносно ваших потреб і бюджету"
+                       Foreground="{StaticResource TextBrush}" HorizontalAlignment="Center"
+                       TextWrapping="Wrap" TextAlignment="Center" Margin="0,12,0,0"/>
+
+                    <Grid Width="220" Margin="0,18,0,26">
+                        <TextBox Height="38" Text="Введіть бюджет"
+                         Background="{StaticResource DarkFieldBrush}" Foreground="White"
+                         BorderThickness="0" FontWeight="SemiBold"
+                         Padding="12,0,50,0" VerticalContentAlignment="Center"/>
+                        <TextBlock Text="UAH" Foreground="White" VerticalAlignment="Center"
+                           HorizontalAlignment="Right" Margin="0,0,12,0" IsHitTestVisible="False"/>
+                    </Grid>
+
+                    <TextBlock Text="Оберіть категорію" Style="{StaticResource SectionTitle}"/>
+                    <ComboBox Style="{StaticResource DropdownField}">
+                        <ComboBoxItem Content="Категорія"/>
+                    </ComboBox>
+
+                    <Expander Style="{StaticResource SectionExpander}">
+                        <Expander.Header>
+                            <TextBlock Text="Розрахувати відносно власних потреб" Style="{StaticResource SectionTitle}"/>
+                        </Expander.Header>
+                        <StackPanel>
+                            <TextBlock Text="Розмістіть потреби в порядку пріоритетів" Foreground="{StaticResource TextBrush}"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="1." Width="24" VerticalAlignment="Center" Foreground="Gray"/>
+                                <ComboBox Style="{StaticResource DropdownField}">
+                                    <ComboBoxItem Content="Оберіть задачу зі списку"/>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="2." Width="24" VerticalAlignment="Center" Foreground="Gray"/>
+                                <ComboBox Style="{StaticResource DropdownField}">
+                                    <ComboBoxItem Content="Оберіть задачу зі списку"/>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="3." Width="24" VerticalAlignment="Center" Foreground="Gray"/>
+                                <ComboBox Style="{StaticResource DropdownField}">
+                                    <ComboBoxItem Content="Оберіть задачу зі списку"/>
+                                </ComboBox>
+                            </StackPanel>
+                            <Button Content="+" Style="{StaticResource AddButton}"/>
+                        </StackPanel>
+                    </Expander>
+
+                    <Expander Style="{StaticResource SectionExpander}" Margin="0,30,0,0">
+                        <Expander.Header>
+                            <TextBlock Text="Додаткові фільтри" Style="{StaticResource SectionTitle}"/>
+                        </Expander.Header>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Тип пристрою зберігання даних" Foreground="{StaticResource TextBrush}"/>
+                                <TextBlock Style="{StaticResource InfoIcon}" ToolTip="Підказка буде додана пізніше"/>
+                            </StackPanel>
+                            <ComboBox Style="{StaticResource DropdownField}">
+                                <ComboBoxItem Content="Оберіть зі списку"/>
+                            </ComboBox>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Об'єм пристрою зберігання даних" Foreground="{StaticResource TextBrush}"/>
+                                <TextBlock Style="{StaticResource InfoIcon}" ToolTip="Підказка буде додана пізніше"/>
+                            </StackPanel>
+                            <ComboBox Style="{StaticResource DropdownField}">
+                                <ComboBoxItem Content="Оберіть зі списку"/>
+                            </ComboBox>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Система охолодження" Foreground="{StaticResource TextBrush}"/>
+                                <TextBlock Style="{StaticResource InfoIcon}" ToolTip="Підказка буде додана пізніше"/>
+                            </StackPanel>
+                            <ComboBox Style="{StaticResource DropdownField}">
+                                <ComboBoxItem Content="Оберіть зі списку"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </Expander>
+
+                    <Button Content="Зібрати ПК" Style="{StaticResource PrimaryButton}"
+                    HorizontalAlignment="Center" Margin="0,24,0,0"/>
+
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
