@@ -77,6 +77,35 @@
             </Setter>
         </Style>
 
+        <Style x:Key="RefreshButton" TargetType="Button">
+            <Setter Property="DockPanel.Dock" Value="Right"/>
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{StaticResource RefreshBrush}"/>
+            <Setter Property="Margin" Value="16,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <Path Data="M 4 12 A 8 8 0 0 1 20 8 L 15 8 M 20 8 L 20 13 M 20 12 A 8 8 0 0 1 4 16 L 9 16 M 4 16 L 4 11"
+                          Stroke="{TemplateBinding Foreground}" 
+                          StrokeThickness="2.5" 
+                          StrokeStartLineCap="Round" 
+                          StrokeEndLineCap="Round" 
+                          StrokeLineJoin="Round"
+                          HorizontalAlignment="Center" 
+                          VerticalAlignment="Center"
+                          Stretch="Uniform"
+                          Margin="4"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
 
         <Style x:Key="PageTitle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="26"/>

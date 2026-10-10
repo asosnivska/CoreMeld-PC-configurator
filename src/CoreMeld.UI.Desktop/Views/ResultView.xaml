@@ -30,13 +30,27 @@
         </Style>
         <Style x:Key="RefreshButton" TargetType="Button">
             <Setter Property="DockPanel.Dock" Value="Right"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Foreground" Value="{StaticResource RefreshBrush}"/>
-            <Setter Property="FontSize" Value="26"/>
             <Setter Property="Margin" Value="16,0"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <Viewbox Width="30" Height="30">
+                                <Canvas Width="24" Height="24">
+                                    <Path Fill="{TemplateBinding Foreground}"
+                                  Data="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+                                </Canvas>
+                            </Viewbox>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
         <Style x:Key="ComponentName" TargetType="TextBlock">
             <Setter Property="Foreground" Value="Black"/>
@@ -98,7 +112,7 @@
                         <Ellipse Fill="#4285F4" Style="{StaticResource CategoryDot}"/>
                         <TextBlock Text="Процесор" Style="{StaticResource CategoryName}"/>
                         <TextBlock Text="6 784 грн" Style="{StaticResource PriceText}"/>
-                        <Button Content="↻" Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"/>
+                        <Button Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"/>
                         <TextBlock Text="Процесор AMD Ryzen 5 5600X s-AM4 4.6GHz/32MB Tray (100-000000065)" Style="{StaticResource ComponentName}"/>
                     </DockPanel>
 
@@ -106,7 +120,7 @@
                         <Ellipse Fill="#EA4335" Style="{StaticResource CategoryDot}"/>
                         <TextBlock Text="Материнська плата" Style="{StaticResource CategoryName}"/>
                         <TextBlock Text="3 199 грн" Style="{StaticResource PriceText}"/>
-                        <Button Content="↻" Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"/>
+                        <Button Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь" Click="Button_Click_1"/>
                         <TextBlock Text="Материнська плата Asus TUF Gaming A520M-Plus II s-AM4 A520" Style="{StaticResource ComponentName}"/>
                     </DockPanel>
 
@@ -114,7 +128,7 @@
                         <Ellipse Fill="#FCD04F" Style="{StaticResource CategoryDot}"/>
                         <TextBlock Text="Оперативна пам'ять" Style="{StaticResource CategoryName}"/>
                         <TextBlock Text="6 748 грн" Style="{StaticResource PriceText}"/>
-                        <Button Content="↻" Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"/>
+                        <Button Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"/>
                         <TextBlock Text="Модуль пам'яті G.Skill DDR4 16GB 2×8GB 3600MHz Ripjaws V Black (F4-3600C18D-16GVK)" Style="{StaticResource ComponentName}"/>
                     </DockPanel>
 
@@ -122,7 +136,7 @@
                         <Ellipse Fill="#05C274" Style="{StaticResource CategoryDot}"/>
                         <TextBlock Text="Відеокарта" Style="{StaticResource CategoryName}"/>
                         <TextBlock Text="5 305 грн" Style="{StaticResource PriceText}"/>
-                        <Button Content="↻" Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"/>
+                        <Button Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь" Click="Button_Click_2"/>
                         <TextBlock Text="Відеокарта MSI PCI-E GeForce GT1030 4GB DDR4 (GT 1030 4GHD4 LP OC)" Style="{StaticResource ComponentName}"/>
                     </DockPanel>
 
@@ -130,7 +144,7 @@
                         <Ellipse Fill="#FF6D01" Style="{StaticResource CategoryDot}"/>
                         <TextBlock Text="Пристрій зберігання даних" Style="{StaticResource CategoryName}"/>
                         <TextBlock Text="1 809 грн" Style="{StaticResource PriceText}"/>
-                        <Button Content="↻" Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"/>
+                        <Button Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"/>
                         <TextBlock Text="SSD-накопичувач 2.5&quot; SATA 256GB Prologix S360 (PRO256GS360)" Style="{StaticResource ComponentName}"/>
                     </DockPanel>
 
@@ -138,7 +152,7 @@
                         <Ellipse Fill="#46BDC6" Style="{StaticResource CategoryDot}"/>
                         <TextBlock Text="Охолодження процесору" Style="{StaticResource CategoryName}"/>
                         <TextBlock Text="849 грн" Style="{StaticResource PriceText}"/>
-                        <Button Content="↻" Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"/>
+                        <Button Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"/>
                         <TextBlock Text="Кулер для процесора ID-Cooling SE-214-XT Basic" Style="{StaticResource ComponentName}"/>
                     </DockPanel>
 
@@ -146,7 +160,7 @@
                         <Ellipse Fill="#F07B72" Style="{StaticResource CategoryDot}"/>
                         <TextBlock Text="Корпус" Style="{StaticResource CategoryName}"/>
                         <TextBlock Text="1 755 грн" Style="{StaticResource PriceText}"/>
-                        <Button Content="↻" Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"/>
+                        <Button Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"/>
                         <TextBlock Text="Корпус Gamemax Destroyer MB б/БЖ" Style="{StaticResource ComponentName}"/>
                     </DockPanel>
 
@@ -154,7 +168,7 @@
                         <Ellipse Fill="#4285F4" Style="{StaticResource CategoryDot}"/>
                         <TextBlock Text="Блок живлення" Style="{StaticResource CategoryName}"/>
                         <TextBlock Text="4 769 грн" Style="{StaticResource PriceText}"/>
-                        <Button Content="↻" Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"/>
+                        <Button Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"/>
                         <TextBlock Text="Блок живлення 850W Chieftec PPG-850-C" Style="{StaticResource ComponentName}"/>
                     </DockPanel>
 
@@ -162,7 +176,7 @@
                         <Ellipse Fill="#A259FF" Style="{StaticResource CategoryDot}"/>
                         <TextBlock Text="Монітор" Style="{StaticResource CategoryName}"/>
                         <TextBlock Text="3 744 грн" Style="{StaticResource PriceText}"/>
-                        <Button Content="↻" Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"/>
+                        <Button Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"/>
                         <TextBlock Text="Монітор 24&quot; Philips 24E1N1100A/00" Style="{StaticResource ComponentName}"/>
                     </DockPanel>
                 </StackPanel>
