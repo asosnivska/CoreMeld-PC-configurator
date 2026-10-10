@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CoreMeld.UI.Desktop.Views"
              mc:Ignorable="d" 
+             Background="White"
              d:DesignHeight="900" d:DesignWidth="1440">
 
     <UserControl.Resources>
@@ -54,7 +55,7 @@
 
         <Border Grid.Row="0" Style="{StaticResource HeaderBar}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="117,0,0,0">
-                <Button Style="{StaticResource BackButton}" ToolTip="Назад"/>
+                <Button Style="{StaticResource BackButton}" ToolTip="Назад" Click="Button_Click"/>
                 <TextBlock Text="COREMELD" Style="{StaticResource LogoTitle}" Margin="16,0,0,0"/>
                 <TextBlock Text="PC CONFIGURATOR" Style="{StaticResource LogoSubtitle}"
                            VerticalAlignment="Bottom" Margin="10,0,0,4"/>
@@ -93,7 +94,6 @@
                 </Border>
                 <TextBlock Text="34 962 / 35 000 UAH" FontSize="11" HorizontalAlignment="Center"/>
 
-                <!-- Список деталей -->
                 <StackPanel Margin="0,36,0,20">
                     <DockPanel Height="72">
                         <Ellipse Fill="#4285F4" Style="{StaticResource CategoryDot}"/>

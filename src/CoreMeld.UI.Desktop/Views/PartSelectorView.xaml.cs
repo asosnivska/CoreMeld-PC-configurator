@@ -13,14 +13,17 @@ using System.Windows.Shapes;
 
 namespace CoreMeld.UI.Desktop.Views
 {
-    public partial class StartView : UserControl
+    /// <summary>
+    /// Interaction logic for PartSelectorView.xaml
+    /// </summary>
+    public partial class PartSelectorView : UserControl
     {
-        public StartView()
+        public PartSelectorView()
         {
             InitializeComponent();
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
 
         }

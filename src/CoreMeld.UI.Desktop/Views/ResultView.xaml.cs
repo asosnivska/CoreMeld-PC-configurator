@@ -13,14 +13,16 @@ using System.Windows.Shapes;
 
 namespace CoreMeld.UI.Desktop.Views
 {
-    /// <summary>
-    /// Interaction logic for ResultView.xaml
-    /// </summary>
     public partial class ResultView : UserControl
     {
         public ResultView()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

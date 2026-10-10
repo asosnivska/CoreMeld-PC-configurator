@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CoreMeld.UI.Desktop.Views"
              mc:Ignorable="d" 
+             Background="White"
              d:DesignHeight="900" d:DesignWidth="1440">
     
     <UserControl.Resources>
@@ -49,7 +50,7 @@
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <Border Background="{StaticResource PanelBrush}" MaxWidth="742"
-            Margin="30,36,30,60" Padding="30,24,30,40">
+            Margin="30,36,30,60" Padding="30,24,30,40" Height="886">
                 <StackPanel>
 
                     <TextBlock Text="Створіть свій ідеальний ПК" Style="{StaticResource PageTitle}"/>
@@ -58,10 +59,13 @@
                        TextWrapping="Wrap" TextAlignment="Center" Margin="0,12,0,0"/>
 
                     <Grid Width="220" Margin="0,18,0,26">
-                        <TextBox Height="38" Text="Введіть бюджет"
-                         Background="{StaticResource DarkFieldBrush}" Foreground="White"
-                         BorderThickness="0" FontWeight="SemiBold"
-                         Padding="12,0,50,0" VerticalContentAlignment="Center"/>
+                        <Border Background="{StaticResource DarkFieldBrush}" CornerRadius="10">
+                            <TextBox Height="38" Text="Введіть бюджет"
+                                 Background="Transparent" Foreground="White"
+                                 BorderThickness="0" FontWeight="SemiBold"
+                                 Padding="12,0,50,0" VerticalContentAlignment="Center"/>
+                        </Border>
+                        
                         <TextBlock Text="UAH" Foreground="White" VerticalAlignment="Center"
                            HorizontalAlignment="Right" Margin="0,0,12,0" IsHitTestVisible="False"/>
                     </Grid>
