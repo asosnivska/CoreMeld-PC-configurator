@@ -1,19 +1,32 @@
-## Description
-Please briefly describe the changes made in this PR and the problem it solves.
+Closes #
 
-## Опис українською
-Будь ласка, коротко опишіть зміни, зроблені у цьому ПР, і які проблеми він вирішує.
+## Summary (EN)
+<!-- 1–2 sentences: what changed and why. -->
 
-## Related Issues
-- Closes # (specify issue number)
+## Що зроблено (UA)
+<!-- Короткий список змін. Один пункт – одна зміна. -->
+-
 
-## Type of Change
-Please check the options that apply:
+## Що не входить у цей PR
+<!-- Що навмисно залишено на інші тікети. Якщо нічого – видали розділ. -->
+-
+
+## Type of change
+- [ ] Feature
 - [ ] Bug fix
-- [ ] New feature
 - [ ] Refactoring
-- [ ] Documentation update
+- [ ] Tests
+- [ ] Docs
+- [ ] CI
 
-## Developer Checklist:
-- [ ] I have performed a self-review of my own code
-- [ ] My changes generate no new warnings or errors
+## Як перевірити / How to test
+1.
+2.
+3.
+
+##  Screenshots
+<!-- Для змін в інтерфейсі: до і після. Для іншого – видали розділ. -->
+
+## Author checklist
+- [ ] Self-review done
+- [ ] Builds without errors, no new warnings
