@@ -3,6 +3,141 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:CoreMeld.UI.Desktop">
     <Application.Resources>
-         
+        
+        <SolidColorBrush x:Key="HeaderBrush" Color="#85D5F6"/>
+        <SolidColorBrush x:Key="BackCircleBrush" Color="#A4E0F8"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="#72AAC1"/>
+        <SolidColorBrush x:Key="NavyBrush" Color="#212161"/>
+        <SolidColorBrush x:Key="TextBrush" Color="#444444"/>
+        <SolidColorBrush x:Key="PanelBrush" Color="#FAFAFA"/>
+        <SolidColorBrush x:Key="StripeBrush" Color="#F1F1F1"/>
+        <SolidColorBrush x:Key="LineBrush" Color="#DCDCDC"/>
+        <SolidColorBrush x:Key="DividerBrush" Color="#EBEBEB"/>
+        <SolidColorBrush x:Key="DarkFieldBrush" Color="#5C5C5C"/>
+        <SolidColorBrush x:Key="RefreshBrush" Color="#7BAAF7"/>
+        <SolidColorBrush x:Key="InfoBrush" Color="#05C274"/>
+        
+
+        <Style x:Key="HeaderBar" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource HeaderBrush}"/>
+            <Setter Property="Height" Value="66"/>
+        </Style>
+
+        <Style x:Key="LogoTitle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Bahnschrift Condensed, Segoe UI"/>
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style x:Key="LogoSubtitle" TargetType="TextBlock" BasedOn="{StaticResource LogoTitle}">
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+
+        <Style x:Key="BackButton" TargetType="Button">
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{StaticResource BackCircleBrush}" CornerRadius="18">
+                            <TextBlock Text="←" Foreground="White" FontSize="20" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="36,10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="22"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style x:Key="PageTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="26"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{StaticResource NavyBrush}"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
+        </Style>
+
+
+        <Style x:Key="DropdownField" TargetType="ComboBox">
+            <Setter Property="Width" Value="240"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="SelectedIndex" Value="0"/>
+            <Setter Property="Margin" Value="0,6,0,12"/>
+        </Style>
+
+
+        <Style x:Key="SectionToggle" TargetType="ToggleButton">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border BorderBrush="{StaticResource AccentBrush}" BorderThickness="0,0,0,2"
+                                Background="Transparent" Padding="0,0,0,6">
+                            <StackPanel Orientation="Horizontal">
+                                <ContentPresenter VerticalAlignment="Center"/>
+                                <Path x:Name="Arrow" Data="M 0 6 L 6 0 L 12 6 Z" Fill="#C8C8C8"
+                                      Margin="14,2,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter TargetName="Arrow" Property="Data" Value="M 0 0 L 6 6 L 12 0 Z"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SectionExpander" TargetType="Expander">
+            <Setter Property="IsExpanded" Value="True"/>
+            <Setter Property="Margin" Value="0,18,0,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Expander">
+                        <StackPanel>
+                            <ToggleButton Style="{StaticResource SectionToggle}"
+                                          Content="{TemplateBinding Header}"
+                                          IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+                            <ContentPresenter x:Name="Body" Margin="0,12,0,0"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="False">
+                                <Setter TargetName="Body" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Application.Resources>
 </Application>
