@@ -25,7 +25,7 @@ ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO components (id, category_id, name, price, brand, color, image_url)
 VALUES (1, 1, 'Ryzen 5 5600', 5200.00, 'AMD', 'Silver', 'https://example.com/cpu.jpg')
-ON CONFLICT (id) DO NOTHING
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO cpus (component_id, socket_id, cores, threads, base_clock, boost_clock, tdp_watts, has_integrated_gpu)
 VALUES (1, 1, 6, 12, 3.5, 4.4, 65, FALSE)
