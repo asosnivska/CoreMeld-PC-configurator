@@ -82,6 +82,20 @@ CREATE TABLE IF NOT EXISTS storage_drives (
     interface VARCHAR(50) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS cpu_coolers (
+    component_id INT PRIMARY KEY REFERENCES components(id) ON DELETE CASCADE,
+    fan_rpm INT,
+    noise_level_db DECIMAL(4, 1),
+    height_mm INT NOT NULL,
+    tdp_rating_watts INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS cpu_cooler_sockets (
+    cooler_id INT REFERENCES cpu_coolers(component_id) ON DELETE CASCADE,
+    socket_id INT REFERENCES sockets(id) ON DELETE RESTRICT,
+    PRIMARY KEY (cooler_id, socket_id)
+);
+
 CREATE TABLE IF NOT EXISTS builds (
     id SERIAL PRIMARY KEY,
     name VARCHAR(200) NOT NULL,

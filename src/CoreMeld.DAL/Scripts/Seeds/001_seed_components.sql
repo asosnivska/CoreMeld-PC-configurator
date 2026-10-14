@@ -46,6 +46,18 @@ INSERT INTO ram_modules (component_id, memory_type, capacity_gb, module_count, f
 VALUES (3, 'DDR4', 16, 2, 3200)
 ON CONFLICT (component_id) DO NOTHING;
 
+INSERT INTO components (id, category_id, name, price, brand, image_url)
+VALUES (4, 8, 'Deepcool AK400', 1200.00, 'Deepcool', 'https://example.com/cooler.jpg')
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO cpu_coolers (component_id, fan_rpm, noise_level_db, height_mm, tdp_rating_watts)
+VALUES (4, 1850, 29.0, 155, 220)
+ON CONFLICT (component_id) DO NOTHING;
+
+INSERT INTO cpu_cooler_sockets (cooler_id, socket_id) VALUES
+(4, 1), (4, 2), (4, 3)
+ON CONFLICT DO NOTHING;
+
 SELECT setval('categories_id_seq', (SELECT MAX(id) FROM categories));
 SELECT setval('sockets_id_seq', (SELECT MAX(id) FROM sockets));
 SELECT setval('form_factors_id_seq', (SELECT MAX(id) FROM form_factors));
