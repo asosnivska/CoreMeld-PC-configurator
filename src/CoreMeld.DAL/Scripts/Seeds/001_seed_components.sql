@@ -8,6 +8,7 @@ INSERT INTO categories (id, name) VALUES
 (5, 'Power Supply'),
 (6, 'Case'),
 (7, 'Storage')
+(8, 'CPU Cooler')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO sockets (id, name) VALUES
