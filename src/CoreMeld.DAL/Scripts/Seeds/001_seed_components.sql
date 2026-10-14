@@ -5,10 +5,10 @@ INSERT INTO categories (id, name) VALUES
 (2, 'Motherboard'),
 (3, 'GPU'),
 (4, 'RAM'),
-(5, 'Power Supply'),
-(6, 'Case'),
-(7, 'Storage')
-(8, 'CPU Cooler')
+(5, 'Storage'),
+(6, 'CPU Cooler'),
+(7, 'Case'),
+(8, 'Power Supply')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO sockets (id, name) VALUES
@@ -23,9 +23,9 @@ INSERT INTO form_factors (id, name) VALUES
 (3, 'Mini-ITX')
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO components (id, category_id, name, price, brand, image_url)
-VALUES (1, 1, 'Ryzen 5 5600', 5200.00, 'AMD', 'https://example.com/cpu.jpg')
-ON CONFLICT (id) DO NOTHING;
+INSERT INTO components (id, category_id, name, price, brand, color, image_url)
+VALUES (1, 1, 'Ryzen 5 5600', 5200.00, 'AMD', 'Silver', 'https://example.com/cpu.jpg')
+ON CONFLICT (id) DO NOTHING
 
 INSERT INTO cpus (component_id, socket_id, cores, threads, base_clock, boost_clock, tdp_watts, has_integrated_gpu)
 VALUES (1, 1, 6, 12, 3.5, 4.4, 65, FALSE)
@@ -48,7 +48,7 @@ VALUES (3, 'DDR4', 16, 2, 3200)
 ON CONFLICT (component_id) DO NOTHING;
 
 INSERT INTO components (id, category_id, name, price, brand, color, image_url)
-VALUES (4, 8, 'Deepcool AK400', 1200.00, 'Deepcool', 'Black', 'https://example.com/cooler.jpg')
+VALUES (4, 6, 'Deepcool AK400', 1200.00, 'Deepcool', 'Black', 'https://example.com/cooler.jpg')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO cpu_coolers (component_id, fan_rpm, noise_level_db, height_mm, tdp_rating_watts)
