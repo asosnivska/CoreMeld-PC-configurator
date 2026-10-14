@@ -31,8 +31,9 @@ public class ComponentRepository : IComponentRepository
                 Name = reader.GetString(1),
                 Price = reader.GetDecimal(2),
                 Brand = reader.GetString(3),
-                Color = reader.GetString(4),
-                CategoryId = reader.GetInt32(5)
+                Color = reader.IsDBNull(4) ? string.Empty : reader.GetString(4),
+                ImageUrl = reader.IsDBNull(5) ? string.Empty : reader.GetString(5),
+                CategoryId = reader.GetInt32(6)
             });
         }
 

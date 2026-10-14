@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS components (
     name VARCHAR(250) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     brand VARCHAR(100) NOT NULL,
+    color VARCHAR(50),
     image_url VARCHAR(500)
 );
 

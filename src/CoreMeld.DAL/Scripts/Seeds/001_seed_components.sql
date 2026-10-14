@@ -30,24 +30,24 @@ INSERT INTO cpus (component_id, socket_id, cores, threads, base_clock, boost_clo
 VALUES (1, 1, 6, 12, 3.5, 4.4, 65, FALSE)
 ON CONFLICT (component_id) DO NOTHING;
 
-INSERT INTO components (id, category_id, name, price, brand, image_url)
-VALUES (2, 3, 'GeForce RTX 4060 Dual', 13500.00, 'ASUS', 'https://example.com/gpu.jpg')
+INSERT INTO components (id, category_id, name, price, brand, color, image_url)
+VALUES (2, 3, 'GeForce RTX 4060 Dual', 13500.00, 'ASUS', 'Black', 'https://example.com/gpu.jpg')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO gpus (component_id, vram_gb, memory_type, tdp_watts, length_mm, recommended_psu_watts)
 VALUES (2, 8, 'GDDR6', 115, 227, 550)
 ON CONFLICT (component_id) DO NOTHING;
 
-INSERT INTO components (id, category_id, name, price, brand, image_url)
-VALUES (3, 4, 'Fury Beast 16GB DDR4', 1600.00, 'Kingston', 'https://example.com/ram.jpg')
+INSERT INTO components (id, category_id, name, price, brand, color, image_url)
+VALUES (3, 4, 'Fury Beast 16GB DDR4', 1600.00, 'Kingston', 'Black', 'https://example.com/ram.jpg')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO ram_modules (component_id, memory_type, capacity_gb, module_count, frequency_mhz)
 VALUES (3, 'DDR4', 16, 2, 3200)
 ON CONFLICT (component_id) DO NOTHING;
 
-INSERT INTO components (id, category_id, name, price, brand, image_url)
-VALUES (4, 8, 'Deepcool AK400', 1200.00, 'Deepcool', 'https://example.com/cooler.jpg')
+INSERT INTO components (id, category_id, name, price, brand, color, image_url)
+VALUES (4, 8, 'Deepcool AK400', 1200.00, 'Deepcool', 'Black', 'https://example.com/cooler.jpg')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO cpu_coolers (component_id, fan_rpm, noise_level_db, height_mm, tdp_rating_watts)
