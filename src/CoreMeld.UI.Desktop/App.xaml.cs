@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using CoreMeld.BLL;
+using DotNetEnv;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CoreMeld.UI.Desktop;
@@ -12,6 +14,7 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
 
+        Env.Load();
         services.AddBusinessLogic();
         services.AddSingleton<MainWindow>();
 

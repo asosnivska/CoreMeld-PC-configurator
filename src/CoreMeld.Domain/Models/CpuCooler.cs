@@ -1,6 +1,5 @@
-﻿namespace CoreMeld.Domain.Models;
+namespace CoreMeld.Domain.Models;
 
-public class CpuCooler: Components
+public class CpuCooler: Component
 {
-    
 }
