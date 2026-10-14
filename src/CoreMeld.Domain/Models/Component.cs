@@ -1,6 +1,6 @@
-﻿namespace CoreMeld.Domain.Models;
+namespace CoreMeld.Domain.Models;
 
-public abstract class Components
+public class Component
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
@@ -8,4 +8,5 @@ public abstract class Components
     public string Brand { get; set; } = string.Empty;
     public string Color { get; set; } = string.Empty;
     public int CategoryId { get; set; }
+    public string ImageUrl { get; set; } = string.Empty;
 }
