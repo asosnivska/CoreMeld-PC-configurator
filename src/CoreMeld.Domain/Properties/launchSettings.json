@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "CoreMeld.Domain": {
+      "commandName": "Project"
+    }
+  }
+}
