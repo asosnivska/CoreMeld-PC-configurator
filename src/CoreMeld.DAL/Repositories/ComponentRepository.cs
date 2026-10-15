@@ -20,7 +20,7 @@ public class ComponentRepository : IComponentRepository
         await using var connection = _dbManager.CreateConnection();
         await connection.OpenAsync();
 
-        await using var command = new NpgsqlCommand("SELECT id, name, price, brand, color, category_id FROM components", connection);
+        await using var command = new NpgsqlCommand("SELECT id, name, price, brand, color, image_url, category_id FROM components", connection);
         await using var reader = await command.ExecuteReaderAsync();
 
         while (await reader.ReadAsync())
@@ -45,7 +45,7 @@ public class ComponentRepository : IComponentRepository
         await using var connection = _dbManager.CreateConnection();
         await connection.OpenAsync();
 
-        await using var command = new NpgsqlCommand("SELECT id, name, price, brand, color, category_id FROM components WHERE id = @id", connection);
+        await using var command = new NpgsqlCommand("SELECT id, name, price, brand, color, image_url, category_id FROM components WHERE id = @id", connection);
         command.Parameters.AddWithValue("id", id);
 
         await using var reader = await command.ExecuteReaderAsync();
@@ -59,7 +59,8 @@ public class ComponentRepository : IComponentRepository
                 Price = reader.GetDecimal(2),
                 Brand = reader.GetString(3),
                 Color = reader.GetString(4),
-                CategoryId = reader.GetInt32(5)
+                ImageUrl = reader.IsDBNull(5) ? string.Empty : reader.GetString(5),
+                CategoryId = reader.GetInt32(6)
             };
         }
 
