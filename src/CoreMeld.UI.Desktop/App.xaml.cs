@@ -1,10 +1,11 @@
-﻿using System;
-using System.Windows;
-using CoreMeld.BLL;
-using DotNetEnv;
+﻿using CoreMeld.BLL;
 using CoreMeld.UI.Desktop.ViewModels;
 using CoreMeld.UI.Desktop.Views;
+using DotNetEnv;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.IO;
+using System.Windows;
 
 namespace CoreMeld.UI.Desktop;
 
@@ -16,7 +17,10 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
 
-        Env.Load();
+        var envPath = FindEnvFile();
+        if (envPath != null)
+            Env.Load(envPath);
+
         services.AddBusinessLogic();
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<MainWindow>();
@@ -34,5 +38,18 @@ public partial class App : Application
     {
         _serviceProvider.Dispose();
         base.OnExit(e);
+    }
+
+    private static string? FindEnvFile()
+    {
+        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        while (dir != null)
+        {
+            var candidate = Path.Combine(dir.FullName, ".env");
+            if (File.Exists(candidate))
+                return candidate;
+            dir = dir.Parent;
+        }
+        return null;
     }
 }
