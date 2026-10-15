@@ -1,3 +1,8 @@
 ﻿namespace CoreMeld.BLL.DTO;
 
-public record PCBuildDto();
+public record PCBuildDto(
+    decimal TotalPrice,
+    int TotalTdp,
+    bool IsCompatible,
+    IReadOnlyList<ComponentDTO> Component
+    );

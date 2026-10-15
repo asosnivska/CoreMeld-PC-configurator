@@ -10,4 +10,6 @@ public class PCBuild
     public CpuCooler CpuCooler { get; set; }
     public PCCase Case { get; set; }
     public PowerSupply PowerSupply { get; set; }
+    
+    
 }
