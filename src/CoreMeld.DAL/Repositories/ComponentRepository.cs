@@ -1,4 +1,4 @@
-using CoreMeld.DAL.Interfaces;
+using CoreMeld.Domain.Interfaces.Repositories;
 using CoreMeld.Domain.Models;
 using Npgsql;
 

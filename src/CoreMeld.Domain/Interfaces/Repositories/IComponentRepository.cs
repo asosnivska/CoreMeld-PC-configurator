@@ -1,6 +1,6 @@
 using CoreMeld.Domain.Models;
 
-namespace CoreMeld.DAL.Interfaces;
+namespace CoreMeld.Domain.Interfaces.Repositories;
 
 public interface IComponentRepository
 {
