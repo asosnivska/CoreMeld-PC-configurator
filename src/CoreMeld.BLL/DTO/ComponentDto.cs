@@ -2,12 +2,12 @@
 
 namespace CoreMeld.BLL.DTO;
 
-public record ComponentDTO(
+public record ComponentDto(
         int Id,
         ComponentCategory Category,
         string Name,
         string Brand,
         decimal Price,
         string ImageUrl,
-        IReadOnlyList<СharacteristicDTO> Characteristis
+        IReadOnlyList<CharacteristicDto> Characteristics
     );

@@ -4,5 +4,5 @@ public record PCBuildDto(
     decimal TotalPrice,
     int TotalTdp,
     bool IsCompatible,
-    IReadOnlyList<ComponentDTO> Component
+    IReadOnlyList<ComponentDto> Component
     );
