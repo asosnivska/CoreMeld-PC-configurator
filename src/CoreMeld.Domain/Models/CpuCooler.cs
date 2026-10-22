@@ -6,6 +6,6 @@ public class CpuCooler: Component
     public int TdpRatingWatts { get; set; }
     public int? FanRpm { get; set; }
     public decimal? NoiseLevelDb { get; set; }
-    public int SupportedSocketIds { get; set; }
+    public int SocketId { get; set; }
     
 }

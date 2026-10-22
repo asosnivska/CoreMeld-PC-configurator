@@ -11,6 +11,7 @@ public interface IMotherboardRepository
         string? memoryType = null,
         int? minMemorySlots = null,
         int? minSupportedMemoryGb = null,
+        bool? hasWifi = null,
 
         
         decimal? minPrice = null,

@@ -8,5 +8,6 @@ public class Motherboard: Component
     public string MemoryType { get; set; }= String.Empty;
     public int MemorySlots { get; set; }
     public int MaxMemoryGb { get; set; }
+    public bool HasWifi { get; init; }
     
 }

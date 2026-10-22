@@ -6,11 +6,11 @@ public interface IStorageRepository
     Task<Storage?> GetByIdAsync(int id);
     Task<IEnumerable<Storage>> GetByFilterAsync(
         
-        IEnumerable<string>? driveType = null,
+        IEnumerable<StorageType>? driveType = null,
         int? capacityGb = null,
         IEnumerable<string>? interfaces = null,
 
-    decimal? minPrice = null,
+        decimal? minPrice = null,
         decimal? maxPrice = null,
         IEnumerable<string>? brands = null,
         string? nameContains = null,
