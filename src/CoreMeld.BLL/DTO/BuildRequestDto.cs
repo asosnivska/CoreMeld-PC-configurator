@@ -7,8 +7,8 @@ public record BuildRequestDto(
     string? PreferredColor ,
     bool? RequireWifi,
     StorageType? StorageType,
-    CoolingType? CoolingType,
-    IReadOnlyList<Category> Categories  ,
+    CoolingType? CoolingType, 
+    Category? Category,
     int? RequestedRamGb,
     int? RequestedStorageGb 
     );

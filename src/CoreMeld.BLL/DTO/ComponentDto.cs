@@ -8,6 +8,6 @@ public record ComponentDto(
         string Name,
         string Brand,
         decimal Price,
-        string ImageUrl,
+        string? ImageUrl,
         IReadOnlyList<CharacteristicDto> Characteristics
     );
