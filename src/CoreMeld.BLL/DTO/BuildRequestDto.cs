@@ -9,6 +9,7 @@ public record BuildRequestDto(
     StorageType? StorageType,
     CoolingType? CoolingType, 
     Category? Category,
+    IReadOnlyList<UserTask>? Priorities,
     int? RequestedRamGb,
     int? RequestedStorageGb 
     );
