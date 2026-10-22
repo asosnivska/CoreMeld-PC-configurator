@@ -8,7 +8,7 @@ public interface IMotherboardRepository
         int? socketId = null,
         string? chipset = null,
         int? formFactorId = null,
-        string? memoryType = null,
+        IEnumerable<RamMemoryType>? memoryType = null,
         int? minMemorySlots = null,
         int? minSupportedMemoryGb = null,
         bool? hasWifi = null,

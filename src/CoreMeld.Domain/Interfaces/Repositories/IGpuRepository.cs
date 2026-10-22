@@ -7,7 +7,7 @@ public interface IGpuRepository
         
         int? minVramGb = null,
         int? maxRecommendedPsuWatts = null,
-        IEnumerable<string>? memoryType = null,
+        IEnumerable<VideoMemoryType>? memoryType = null,
         int? maxTdpWatts = null,
         int? maxLengthMm = null,
         

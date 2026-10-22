@@ -5,7 +5,7 @@ public interface IRamRepository
     Task<Ram?> GetByIdAsync(int id);
     Task<IEnumerable<Ram>> GetByFilterAsync(
         
-        IEnumerable<string>? memoryType = null,
+        IEnumerable<RamMemoryType>? memoryType = null,
         int? minCapacityGb = null,
         int? maxModuleCount = null,
         int? minFrequencyMhz = null,
