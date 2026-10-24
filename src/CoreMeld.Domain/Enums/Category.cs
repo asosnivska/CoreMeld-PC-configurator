@@ -1,4 +1,4 @@
-﻿namespace CoreMeld.Domain.Models;
+﻿namespace CoreMeld.Domain.Enums;
 
 public enum Category
 {
@@ -7,6 +7,7 @@ public enum Category
     Office,
     GamingFullHd,
     Gaming2K,
+    Design2D,
     Gaming4K,
     Design3D,
     Rendering
