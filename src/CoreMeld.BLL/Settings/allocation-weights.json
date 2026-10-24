@@ -1,0 +1,92 @@
+﻿{
+  "HomeFullHd": {
+    "Cpu": 35,
+    "Motherboard": 15,
+    "Gpu": 0,
+    "Ram": 15,
+    "Storage": 15,
+    "CpuCooler": 5,
+    "Case": 6,
+    "PowerSupply": 9
+  },
+  "Home2K": {
+    "Cpu": 35,
+    "Motherboard": 15,
+    "Gpu": 0,
+    "Ram": 15,
+    "Storage": 15,
+    "CpuCooler": 5,
+    "Case": 6,
+    "PowerSupply": 9
+  },
+  "Office": {
+    "Cpu": 35,
+    "Motherboard": 15,
+    "Gpu": 0,
+    "Ram": 15,
+    "Storage": 15,
+    "CpuCooler": 5,
+    "Case": 6,
+    "PowerSupply": 9
+  },
+  "GamingFullHd": {
+    "Cpu": 20,
+    "Motherboard": 10,
+    "Gpu": 35,
+    "Ram": 10,
+    "Storage": 10,
+    "CpuCooler": 5,
+    "Case": 4,
+    "PowerSupply": 6
+  },
+  "Gaming2K": {
+    "Cpu": 15,
+    "Motherboard": 10,
+    "Gpu": 40,
+    "Ram": 10,
+    "Storage": 10,
+    "CpuCooler": 5,
+    "Case": 4,
+    "PowerSupply": 6
+  },
+  "Gaming4K": {
+    "Cpu": 15,
+    "Motherboard": 10,
+    "Gpu": 45,
+    "Ram": 10,
+    "Storage": 5,
+    "CpuCooler": 5,
+    "Case": 4,
+    "PowerSupply": 6
+  },
+  "Design2D": {
+    "Cpu": 30,
+    "Motherboard": 10,
+    "Gpu": 15,
+    "Ram": 20,
+    "Storage": 15,
+    "CpuCooler": 1.5,
+    "Case": 2.5,
+    "PowerSupply": 6
+  },
+  "Design3D": {
+    "Cpu": 25,
+    "Motherboard": 5,
+    "Gpu": 30,
+    "Ram": 15,
+    "Storage": 15,
+    "CpuCooler": 1.5,
+    "Case": 2.5,
+    "PowerSupply": 6
+  },
+  "Rendering": {
+    "Cpu": 25,
+    "Motherboard": 3,
+    "Gpu": 40,
+    "Ram": 15,
+    "Storage": 10,
+    "CpuCooler": 1.5,
+    "Case": 1.5,
+    "PowerSupply": 4
+  }
+}
