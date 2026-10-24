@@ -1,4 +1,4 @@
-﻿namespace CoreMeld.Domain.Models;
+﻿namespace CoreMeld.Domain.Enums;
 
 public enum ComponentCategory
 {

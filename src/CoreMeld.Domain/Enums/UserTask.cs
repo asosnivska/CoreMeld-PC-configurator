@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace CoreMeld.Domain.Models;
+namespace CoreMeld.Domain.Enums;
 
 public enum UserTask
 {

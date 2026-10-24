@@ -1,4 +1,5 @@
-﻿using CoreMeld.Domain.Models;
+﻿using CoreMeld.Domain.Enums;
+using CoreMeld.Domain.Models;
 
 namespace CoreMeld.BLL.DTO;
 

@@ -1,3 +1,5 @@
+using CoreMeld.Domain.Enums;
+
 namespace CoreMeld.Domain.Models;
 
 public class Gpu: Component
