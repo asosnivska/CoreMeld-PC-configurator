@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using CoreMeld.Domain.Models;
+using System.Windows;
 
 namespace CoreMeld.UI.Desktop.ViewModels;
 
@@ -45,4 +46,7 @@ public class ResultItemViewModel
     };
 
     public string PriceText => $"{Price.ToString("N0", Ua)} грн";
+
+    public string Hint =>
+    Application.Current?.TryFindResource($"Hint.Category.{Category}") as string ?? string.Empty;
 }

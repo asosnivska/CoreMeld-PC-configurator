@@ -103,7 +103,10 @@
                         <DataTemplate>
                             <DockPanel Height="72">
                                 <Ellipse Fill="{Binding Color}" Style="{StaticResource CategoryDot}"/>
-                                <TextBlock Text="{Binding CategoryName}" Style="{StaticResource CategoryName}"/>
+                                <TextBlock Text="{Binding CategoryName}" ToolTip="{Binding Hint}"
+                                           ToolTipService.InitialShowDelay="0" ToolTipService.ShowDuration="15000"
+                                           Style="{StaticResource CategoryName}"/>  
+                                
                                 <TextBlock Text="{Binding PriceText}" Style="{StaticResource PriceText}"/>
                                 <Button Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"
                         Command="{Binding DataContext.ReplaceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
