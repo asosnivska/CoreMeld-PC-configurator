@@ -134,10 +134,21 @@
                     </Expander>
 
                     <Expander Style="{StaticResource SectionExpander}" Margin="0,30,0,0">
+                        
                         <Expander.Header>
                             <TextBlock Text="Додаткові фільтри" Style="{StaticResource SectionTitle}"/>
                         </Expander.Header>
+                        
                         <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Обсяг оперативної пам'яті" Foreground="{StaticResource TextBrush}"/>
+                                <TextBlock Style="{StaticResource InfoIcon}" ToolTip="{StaticResource Hint.Ram}"/>
+                            </StackPanel>
+                            <ComboBox Style="{StaticResource DropdownField}"
+                                      ItemsSource="{Binding RamOptions}"
+                                      SelectedItem="{Binding SelectedRam}"
+                                      DisplayMemberPath="Title"/>
+
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Тип пристрою зберігання даних" Foreground="{StaticResource TextBrush}"/>
                                 <TextBlock Style="{StaticResource InfoIcon}" ToolTip="{StaticResource Hint.StorageType}"/>
@@ -164,6 +175,19 @@
                                       ItemsSource="{Binding CoolingOptions}"
                                       SelectedItem="{Binding SelectedCooling}"
                                       DisplayMemberPath="Title"/>
+
+                            <TextBlock Text="Колір корпусу" Foreground="{StaticResource TextBrush}"/>
+                            <ComboBox Style="{StaticResource DropdownField}"
+                                      ItemsSource="{Binding ColorOptions}"
+                                      SelectedItem="{Binding SelectedColor}"
+                                      DisplayMemberPath="Title"/>
+
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox Content="Потрібен Wi-Fi" IsChecked="{Binding RequireWifi}"
+                                          Foreground="{StaticResource TextBrush}" VerticalContentAlignment="Center"/>
+                                <TextBlock Style="{StaticResource InfoIcon}" ToolTip="{StaticResource Hint.Wifi}"/>
+                            </StackPanel>
+
                         </StackPanel>
                     </Expander>
 
