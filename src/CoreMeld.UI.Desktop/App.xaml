@@ -5,6 +5,7 @@
              xmlns:views="clr-namespace:CoreMeld.UI.Desktop.Views">
     <Application.Resources>
         
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
         <SolidColorBrush x:Key="HeaderBrush" Color="#85D5F6"/>
         <SolidColorBrush x:Key="BackCircleBrush" Color="#A4E0F8"/>
         <SolidColorBrush x:Key="AccentBrush" Color="#72AAC1"/>
