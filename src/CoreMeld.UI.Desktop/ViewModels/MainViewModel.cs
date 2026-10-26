@@ -6,7 +6,9 @@ namespace CoreMeld.UI.Desktop.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
+    //private const bool PreviewResultScreen = false;
     private const bool PreviewResultScreen = true;
+
     private readonly StartViewModel _startViewModel;
     private ViewModelBase _currentViewModel;
 
