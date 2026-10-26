@@ -2,16 +2,18 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
 
-    <sys:String x:Key="Hint.StorageType" xml:space="preserve">SSD – швидкий накопичувач: система та ігри завантажуються значно швидше.&#10;&#10;HDD – повільніший, але дешевший за кожен гігабайт, тому його обирають для більших архівів.</sys:String>
-    <sys:String x:Key="Hint.StorageCapacity" xml:space="preserve">Тут буде поміщатись ваша система, ігри та файли.&#10;&#10;Для офісу вистачить 256–500 ГБ, для ігор бажано від 1 ТБ (сучасні ігри займають до 100 ГБ).</sys:String>
-    <sys:String x:Key="Hint.Cooling" xml:space="preserve">Повітряне охолодження (кулер) – простіше й дешевше.&#10;&#10;Рідинне (СРО) тихше й потужніше, але коштує більше і потребує місця в корпусі.</sys:String>
+    <sys:String x:Key="Hint.StorageType" xml:space="preserve">SSD працює швидко: система й ігри вантажаться за секунди.&#10;&#10;HDD повільніший, зате дешевший. Його беруть, коли потрібно багато місця для фото, відео чи фільмів.</sys:String>
+    <sys:String x:Key="Hint.StorageCapacity" xml:space="preserve">Це місце для системи, ігор і ваших файлів.&#10;&#10;Для офісу вистачить 256-500 ГБ. Для ігор краще від 1 ТБ, бо одна сучасна гра може займати до 100 ГБ.</sys:String>
+    <sys:String x:Key="Hint.Cooling" xml:space="preserve">Повітряне охолодження (кулер) простіше й дешевше.&#10;&#10;Рідинне (СРО) тихіше й краще охолоджує, але коштує більше та займає багато місця в корпусі.</sys:String>
+    <sys:String x:Key="Hint.Ram" xml:space="preserve">Пам'ять потрібна, щоб відкривати багато програм і вкладок одночасно.&#10;&#10;Для офісу вистачить 8 ГБ, для ігор краще 16 ГБ і більше.</sys:String>
+    <sys:String x:Key="Hint.Wifi" xml:space="preserve">Wi-Fi потрібен майже всім, тому галочка вже стоїть.&#10;Знімайте її, лише якщо комп'ютер підключатиметься до інтернету кабелем.</sys:String>
 
-    <sys:String x:Key="Hint.Category.Cpu" xml:space="preserve">Процесор – «мозок» комп'ютера.&#10;Саме він виконує більшість обчислень у програмах.</sys:String>
-    <sys:String x:Key="Hint.Category.Motherboard" xml:space="preserve">Материнська плата «збирає» всі деталі разом.&#10;Вона визначає, який процесор і яку пам'ять можна вставити.</sys:String>
-    <sys:String x:Key="Hint.Category.Ram" xml:space="preserve">Оперативна пам'ять – робочий стіл комп'ютера.&#10;Чим більше, тим більше програм можна відкрити одночасно.</sys:String>
-    <sys:String x:Key="Hint.Category.Gpu">Відеокарта відповідає за плавність в іграх та роботу з графікою й відео.</sys:String>
-    <sys:String x:Key="Hint.Category.Storage" xml:space="preserve">Накопичувач зберігає систему, програми й ваші файли.&#10;Швидкість накопичувача впливає на швидкість запуску.</sys:String>
-    <sys:String x:Key="Hint.Category.CpuCooler">Кулер забирає тепло від процесора, щоб він не перегрівався і не сповільнювався.</sys:String>
-    <sys:String x:Key="Hint.Category.Case">Корпус тримає всі деталі, захищає їх від пилу і визначає вигляд комп'ютера.</sys:String>
-    <sys:String x:Key="Hint.Category.PowerSupply" xml:space="preserve">Блок живлення дає електрику всім деталям.&#10;Його потужність треба обирати з запасом.</sys:String>
+    <sys:String x:Key="Hint.Category.Cpu" xml:space="preserve">Процесор це мозок комп'ютера.&#10;Він виконує всі обчислення в програмах та іграх.</sys:String>
+    <sys:String x:Key="Hint.Category.Motherboard" xml:space="preserve">Материнська плата з'єднує всі деталі між собою.&#10;Від неї залежить, який процесор і яку пам'ять можна поставити.</sys:String>
+    <sys:String x:Key="Hint.Category.Ram" xml:space="preserve">Оперативна пам'ять схожа на робочий стіл.&#10;Чим він більший, тим більше програм можна тримати відкритими одночасно.</sys:String>
+    <sys:String x:Key="Hint.Category.Gpu">Відеокарта відповідає за картинку. Від неї залежить, наскільки плавно йдуть ігри, відео та робота з графікою.</sys:String>
+    <sys:String x:Key="Hint.Category.Storage" xml:space="preserve">Тут зберігаються система, програми та ваші файли.&#10;Від швидкості накопичувача залежить, як швидко все запускається.</sys:String>
+    <sys:String x:Key="Hint.Category.CpuCooler">Кулер відводить тепло від процесора, щоб той не перегрівався і не гальмував.</sys:String>
+    <sys:String x:Key="Hint.Category.Case">Корпус вміщує всі деталі, захищає їх від пилу і визначає, як виглядатиме комп'ютер.</sys:String>
+    <sys:String x:Key="Hint.Category.PowerSupply" xml:space="preserve">Блок живлення подає струм на всі деталі.&#10;Краще брати з запасом по потужності.</sys:String>
 </ResourceDictionary>

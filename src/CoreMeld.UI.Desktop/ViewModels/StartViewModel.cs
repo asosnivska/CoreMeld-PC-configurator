@@ -16,6 +16,10 @@ public class StartViewModel : ViewModelBase
     private OptionItem<StorageType?> _selectedStorageType;
     private OptionItem<int?> _selectedStorageCapacity;
     private OptionItem<CoolingType?> _selectedCooling;
+    private OptionItem<string?> _selectedColor;
+    private bool _requireWifi = true;
+    private OptionItem<int?> _selectedRam;
+
     private string? _errorMessage;
     private string? _budgetError;
     private bool _isBusy;
@@ -62,10 +66,28 @@ public class StartViewModel : ViewModelBase
             new(CoolingType.Liquid, "Рідинне (СРО)"),
         ];
 
+        ColorOptions =
+        [
+            new(null, "Не обрано"),
+            new("Black", "Чорний"),
+            new("White", "Білий"),
+        ];
+
+        RamOptions =
+        [
+            new(null, "Не обрано"),
+            new(8, "8 ГБ"),
+            new(16, "16 ГБ"),
+            new(32, "32 ГБ"),
+            new(64, "64 ГБ"),
+        ];
+
         _selectedCategory = CategoryOptions[0];
         _selectedStorageType = StorageTypeOptions[0];
         _selectedStorageCapacity = StorageCapacityOptions[0];
         _selectedCooling = CoolingOptions[0];
+        _selectedColor = ColorOptions[0];
+        _selectedRam = RamOptions[0];
 
         BuildCommand = new AsyncRelayCommand(BuildAsync);
     }
@@ -74,6 +96,26 @@ public class StartViewModel : ViewModelBase
     public IReadOnlyList<OptionItem<StorageType?>> StorageTypeOptions { get; }
     public IReadOnlyList<OptionItem<int?>> StorageCapacityOptions { get; }
     public IReadOnlyList<OptionItem<CoolingType?>> CoolingOptions { get; }
+    public IReadOnlyList<OptionItem<string?>> ColorOptions { get; }
+    public IReadOnlyList<OptionItem<int?>> RamOptions { get; }
+
+    public OptionItem<string?> SelectedColor
+    {
+        get => _selectedColor;
+        set => SetProperty(ref _selectedColor, value);
+    }
+
+    public bool RequireWifi
+    {
+        get => _requireWifi;
+        set => SetProperty(ref _requireWifi, value);
+    }
+
+    public OptionItem<int?> SelectedRam
+    {
+        get => _selectedRam;
+        set => SetProperty(ref _selectedRam, value);
+    }
 
     public string BudgetText
     {
@@ -161,13 +203,13 @@ public class StartViewModel : ViewModelBase
 
         var request = new BuildRequestDto(
             Budget: budget,
-            PreferredColor: null,
-            RequireWifi: null,
+            PreferredColor: SelectedColor.Value,
+            RequireWifi: RequireWifi ? true : null,
             StorageType: SelectedStorageType.Value,
             CoolingType: SelectedCooling.Value,
             Category: SelectedCategory.Value,
             Priorities: null,
-            RequestedRamGb: null,
+            RequestedRamGb: SelectedRam.Value,
             RequestedStorageGb: SelectedStorageCapacity.Value);
 
         IsBusy = true;
