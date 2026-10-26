@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         Title="CoreMeld PC Configurator" 
         Height="900" Width="1440" 
-        MinHeight="600" MinWidth="1100"
+        MinHeight="500" MinWidth="820"
         WindowState="Maximized"
         FontSize="13"
         WindowStartupLocation="CenterScreen">
