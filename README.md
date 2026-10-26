@@ -1,13 +1,13 @@
-# CoreMeld — PC Configurator
+# CoreMeld – PC Configurator
 
 A desktop application (.NET / WPF) designed for custom PC building, component validation, and compatibility verification.
 
 ## Architecture
 
-* **CoreMeld.Domain** — Core domain entities and database models.
-* **CoreMeld.DAL** — Data Access Layer built with Pure ADO.NET and PostgreSQL via Npgsql.
-* **CoreMeld.BLL** — Business logic layer, compatibility engine, and DTOs.
-* **CoreMeld.UI.Desktop** — WPF presentation layer with Dependency Injection (`Microsoft.Extensions.DependencyInjection`).
+* **CoreMeld.Domain** – Core domain entities and database models.
+* **CoreMeld.DAL** – Data Access Layer built with Pure ADO.NET and PostgreSQL via Npgsql.
+* **CoreMeld.BLL** – Business logic layer, compatibility engine, and DTOs.
+* **CoreMeld.UI.Desktop** – WPF presentation layer with Dependency Injection (`Microsoft.Extensions.DependencyInjection`).
 
 ---
 
