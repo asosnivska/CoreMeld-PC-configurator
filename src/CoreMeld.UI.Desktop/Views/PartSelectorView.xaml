@@ -87,7 +87,7 @@
         <Border Grid.Row="0" Style="{StaticResource HeaderBar}">
             <Grid>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="37,0,0,0">
-                    <Button Style="{StaticResource BackButton}" ToolTip="Назад" Click="Button_Click"/>
+                    <Button Style="{StaticResource BackButton}" ToolTip="Назад" Command="{Binding BackCommand}"/>
                     <StackPanel Margin="16,0,0,0" VerticalAlignment="Center">
                         <TextBlock Text="COREMELD" Style="{StaticResource LogoTitle}" FontSize="22"/>
                         <TextBlock Text="PC CONFIGURATOR" Style="{StaticResource LogoSubtitle}" FontSize="11"/>

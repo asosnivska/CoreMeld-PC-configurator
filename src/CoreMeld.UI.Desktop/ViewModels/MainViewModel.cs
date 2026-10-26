@@ -6,7 +6,7 @@ namespace CoreMeld.UI.Desktop.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
-    private const bool PreviewResultScreen = false;
+    private const bool PreviewResultScreen = true;
     private readonly StartViewModel _startViewModel;
     private ViewModelBase _currentViewModel;
 
@@ -33,7 +33,8 @@ public class MainViewModel : ViewModelBase
 
     private void ShowPartSelector(ComponentCategory category)
     {
-        CurrentViewModel = new PartSelectorViewModel(() => CurrentViewModel = _startViewModel);
+        var resultViewModel = CurrentViewModel;
+        CurrentViewModel = new PartSelectorViewModel(() => CurrentViewModel = resultViewModel);
     }
 
     private static PCBuildDto SampleBuild() => new(
