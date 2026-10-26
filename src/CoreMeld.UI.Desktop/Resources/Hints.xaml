@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+    <sys:String x:Key="Hint.StorageType" xml:space="preserve">SSD – швидкий накопичувач: система та ігри завантажуються значно швидше.&#10;&#10;HDD – повільніший, але дешевший за кожен гігабайт, тому його обирають для більших архівів.</sys:String>
+    <sys:String x:Key="Hint.StorageCapacity" xml:space="preserve">Тут буде поміщатись ваша система, ігри та файли.&#10;&#10;Для офісу вистачить 256–500 ГБ, для ігор бажано від 1 ТБ (сучасні ігри займають до 100 ГБ).</sys:String>
+    <sys:String x:Key="Hint.Cooling" xml:space="preserve">Повітряне охолодження (кулер) – простіше й дешевше.&#10;&#10;Рідинне (СРО) тихше й потужніше, але коштує більше і потребує місця в корпусі.</sys:String>
+
+    <sys:String x:Key="Hint.Category.Cpu" xml:space="preserve">Процесор – «мозок» комп'ютера.&#10;Саме він виконує більшість обчислень у програмах.</sys:String>
+    <sys:String x:Key="Hint.Category.Motherboard" xml:space="preserve">Материнська плата «збирає» всі деталі разом.&#10;Вона визначає, який процесор і яку пам'ять можна вставити.</sys:String>
+    <sys:String x:Key="Hint.Category.Ram" xml:space="preserve">Оперативна пам'ять – робочий стіл комп'ютера.&#10;Чим більше, тим більше програм можна відкрити одночасно.</sys:String>
+    <sys:String x:Key="Hint.Category.Gpu">Відеокарта відповідає за плавність в іграх та роботу з графікою й відео.</sys:String>
+    <sys:String x:Key="Hint.Category.Storage" xml:space="preserve">Накопичувач зберігає систему, програми й ваші файли.&#10;Швидкість накопичувача впливає на швидкість запуску.</sys:String>
+    <sys:String x:Key="Hint.Category.CpuCooler">Кулер забирає тепло від процесора, щоб він не перегрівався і не сповільнювався.</sys:String>
+    <sys:String x:Key="Hint.Category.Case">Корпус тримає всі деталі, захищає їх від пилу і визначає вигляд комп'ютера.</sys:String>
+    <sys:String x:Key="Hint.Category.PowerSupply" xml:space="preserve">Блок живлення дає електрику всім деталям.&#10;Його потужність треба обирати з запасом.</sys:String>
+</ResourceDictionary>
