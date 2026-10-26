@@ -1,10 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using CoreMeld.UI.Desktop.Commands;
 
-namespace CoreMeld.UI.Desktop.ViewModels
+namespace CoreMeld.UI.Desktop.ViewModels;
+
+public class PartSelectorViewModel : ViewModelBase
 {
-    public class PartSelectorViewModel : ViewModelBase
+    public PartSelectorViewModel(Action onBack)
     {
+        BackCommand = new RelayCommand(_ => onBack());
     }
+
+    public RelayCommand BackCommand { get; }
 }
