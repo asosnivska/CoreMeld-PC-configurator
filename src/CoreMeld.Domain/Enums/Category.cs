@@ -8,6 +8,7 @@ public enum Category
     GamingFullHd,
     Gaming2K,
     Gaming4K,
+    Design2D,
     Design3D,
     Rendering
 }
