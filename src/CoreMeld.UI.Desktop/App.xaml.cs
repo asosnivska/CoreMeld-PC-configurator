@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Windows;
-using CoreMeld.DAL.InMemory;
 
 namespace CoreMeld.UI.Desktop;
 
@@ -25,18 +24,12 @@ public partial class App : Application
         if (envPath != null)
             Env.Load(envPath);
 
-        services.AddBusinessLogic();
+        _useFakeData = !string.Equals(
+            Environment.GetEnvironmentVariable("USE_FAKE_DATA") ?? Environment.GetEnvironmentVariable("UseFakeData"),
+            "false",
+            StringComparison.OrdinalIgnoreCase);
 
-        _useFakeData = !string.Equals(Environment.GetEnvironmentVariable("USE_FAKE_DATA"), "false", StringComparison.OrdinalIgnoreCase);
-        if (_useFakeData)
-        {
-            services.AddInMemoryRepositories();
-        }
-        else
-        {
-            var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") ?? string.Empty;
-            services.AddDatabaseRepositories(connectionString);
-        }
+        services.AddBusinessLogic(_useFakeData);
 
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<MainWindow>();
@@ -58,7 +51,7 @@ public partial class App : Application
     {
         try
         {
-            var cs = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+            var cs = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") ?? Environment.GetEnvironmentVariable("DbConnectionString");
             if (string.IsNullOrWhiteSpace(cs))
             {
                 MessageBox.Show("DB_CONNECTION_STRING не задано (.env)");
