@@ -25,16 +25,9 @@ public class ComponentRepository : IComponentRepository
 
         while (await reader.ReadAsync())
         {
-            components.Add(new Component
-            {
-                Id = reader.GetInt32(0),
-                Name = reader.GetString(1),
-                Price = reader.GetDecimal(2),
-                Brand = reader.GetString(3),
-                Color = reader.IsDBNull(4) ? string.Empty : reader.GetString(4),
-                ImageUrl = reader.IsDBNull(5) ? string.Empty : reader.GetString(5),
-                CategoryId = reader.GetInt32(6)
-            });
+            var component = new Component();
+            RepositoryQueryHelper.PopulateComponent(component, reader);
+            components.Add(component);
         }
 
         return components;
@@ -52,18 +45,36 @@ public class ComponentRepository : IComponentRepository
 
         if (await reader.ReadAsync())
         {
-            return new Component
-            {
-                Id = reader.GetInt32(0),
-                Name = reader.GetString(1),
-                Price = reader.GetDecimal(2),
-                Brand = reader.GetString(3),
-                Color = reader.GetString(4),
-                ImageUrl = reader.IsDBNull(5) ? string.Empty : reader.GetString(5),
-                CategoryId = reader.GetInt32(6)
-            };
+            var component = new Component();
+            RepositoryQueryHelper.PopulateComponent(component, reader);
+            return component;
         }
 
         return null;
+    }
+
+    public async Task<IEnumerable<Component>> GetByCategoryAsync(ComponentCategory category)
+        => await GetByCategoryIdAsync((int)category);
+
+    public async Task<IEnumerable<Component>> GetByCategoryIdAsync(int categoryId)
+    {
+        var components = new List<Component>();
+
+        await using var connection = _dbManager.CreateConnection();
+        await connection.OpenAsync();
+
+        await using var command = new NpgsqlCommand("SELECT id, name, price, brand, color, image_url, category_id FROM components WHERE category_id = @categoryId", connection);
+        command.Parameters.AddWithValue("categoryId", categoryId);
+
+        await using var reader = await command.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            var component = new Component();
+            RepositoryQueryHelper.PopulateComponent(component, reader);
+            components.Add(component);
+        }
+
+        return components;
     }
 }

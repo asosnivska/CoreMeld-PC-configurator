@@ -1,4 +1,4 @@
-﻿using CoreMeld.BLL;
+using CoreMeld.BLL;
 using CoreMeld.DAL;
 using CoreMeld.DAL.Repositories;
 using CoreMeld.UI.Desktop.ViewModels;
@@ -31,6 +31,11 @@ public partial class App : Application
         if (_useFakeData)
         {
             services.AddInMemoryRepositories();
+        }
+        else
+        {
+            var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") ?? string.Empty;
+            services.AddDatabaseRepositories(connectionString);
         }
 
         services.AddSingleton<MainViewModel>();
