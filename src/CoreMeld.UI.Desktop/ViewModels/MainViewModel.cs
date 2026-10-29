@@ -1,4 +1,4 @@
-﻿using CoreMeld.BLL.DTO;
+using CoreMeld.BLL.DTO;
 using CoreMeld.BLL.Services;
 using CoreMeld.Domain.Models;
 
@@ -6,19 +6,27 @@ namespace CoreMeld.UI.Desktop.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
-    //private const bool PreviewResultScreen = false;
-    private const bool PreviewResultScreen = true;
+    private readonly IPCBuildService _buildService;
+    private readonly IComponentService _componentService;
+    private readonly IConfiguratorEngine _engine;
 
-    private readonly StartViewModel _startViewModel;
     private ViewModelBase _currentViewModel;
+    private ResultViewModel? _resultViewModel;
 
-    public MainViewModel(IConfiguratorEngine engine)
+    public MainViewModel(
+        IPCBuildService buildService,
+        IComponentService componentService,
+        IConfiguratorEngine engine)
     {
-        _startViewModel = new StartViewModel(engine, ShowResult);
-        _currentViewModel = _startViewModel;
+        _buildService = buildService;
+        _componentService = componentService;
+        _engine = engine;
 
-        if (PreviewResultScreen)
-            ShowResult(SampleBuild(), 35_000m);
+        // Start with the Builds Catalog view
+        _currentViewModel = new BuildsViewModel(
+            _buildService,
+            onGoToConstructor: ShowStart,
+            onOpenBuild: (build, budget, existingBuildId) => ShowResult(build, budget, existingBuildId));
     }
 
     public ViewModelBase CurrentViewModel
@@ -26,32 +34,57 @@ public class MainViewModel : ViewModelBase
         get => _currentViewModel;
         set => SetProperty(ref _currentViewModel, value);
     }
-    private void ShowResult(PCBuildDto build, decimal budget)
+
+    public void ShowBuilds()
     {
-        CurrentViewModel = new ResultViewModel(build, budget, ShowStart, ShowPartSelector);
+        CurrentViewModel = new BuildsViewModel(
+            _buildService,
+            onGoToConstructor: ShowStart,
+            onOpenBuild: (build, budget, existingBuildId) => ShowResult(build, budget, existingBuildId));
     }
 
-    private void ShowStart() => CurrentViewModel = _startViewModel;
-
-    private void ShowPartSelector(ComponentCategory category)
+    public void ShowStart()
     {
-        var resultViewModel = CurrentViewModel;
-        CurrentViewModel = new PartSelectorViewModel(() => CurrentViewModel = resultViewModel);
+        CurrentViewModel = new StartViewModel(
+            _engine,
+            showResult: (build, budget) => ShowResult(build, budget, existingBuildId: null),
+            onBack: ShowBuilds);
     }
 
-    private static PCBuildDto SampleBuild() => new(
-        TotalPrice: 34_962m,
-        TotalTdp: 250,
-        IsCompatible: true,
-        Components:
-        [
-            new(1, ComponentCategory.Cpu, "Процесор AMD Ryzen 5 5600X", "AMD", 6_784m, null, []),
-            new(2, ComponentCategory.Motherboard, "Материнська плата Asus TUF Gaming A520M-Plus II", "Asus", 3_199m, null, []),
-            new(3, ComponentCategory.Ram, "Модуль пам'яті G.Skill DDR4 16GB 3600MHz", "G.Skill", 6_748m, null, []),
-            new(4, ComponentCategory.Gpu, "Відеокарта MSI GeForce GT1030 4GB", "MSI", 5_305m, null, []),
-            new(5, ComponentCategory.Storage, "SSD 256GB Prologix S360", "Prologix", 1_809m, null, []),
-            new(6, ComponentCategory.CpuCooler, "Кулер ID-Cooling SE-214-XT Basic", "ID-Cooling", 849m, null, []),
-            new(7, ComponentCategory.Case, "Корпус Gamemax Destroyer MB", "Gamemax", 1_755m, null, []),
-            new(8, ComponentCategory.PowerSupply, "Блок живлення 850W Chieftec PPG-850-C", "Chieftec", 4_769m, null, []),
-        ]);
+    public void ShowResult(PCBuildDto build, decimal budget, int? existingBuildId = null)
+    {
+        _resultViewModel = new ResultViewModel(
+            build,
+            budget,
+            _buildService,
+            onBack: ShowBuilds,
+            onReplace: ShowPartSelector,
+            existingBuildId: existingBuildId);
+
+        CurrentViewModel = _resultViewModel;
+    }
+
+    private void ShowPartSelector(ComponentCategory category, ComponentDto? currentComp)
+    {
+        CurrentViewModel = new PartSelectorViewModel(
+            category,
+            currentComp,
+            _componentService,
+            onSelect: selectedComponent =>
+            {
+                if (_resultViewModel != null)
+                {
+                    var updated = _buildService.ReplaceComponent(_resultViewModel.CurrentBuild, selectedComponent);
+                    _resultViewModel.UpdateBuild(updated);
+                    CurrentViewModel = _resultViewModel;
+                }
+            },
+            onBack: () =>
+            {
+                if (_resultViewModel != null)
+                    CurrentViewModel = _resultViewModel;
+                else
+                    ShowBuilds();
+            });
+    }
 }

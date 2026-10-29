@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using CoreMeld.BLL.DTO;
 using CoreMeld.BLL.Services;
 using CoreMeld.Domain.Models;
@@ -24,10 +24,14 @@ public class StartViewModel : ViewModelBase
     private string? _budgetError;
     private bool _isBusy;
 
-    public StartViewModel(IConfiguratorEngine engine, Action<PCBuildDto, decimal> showResult)
+    public StartViewModel(
+        IConfiguratorEngine engine,
+        Action<PCBuildDto, decimal> showResult,
+        Action? onBack = null)
     {
         _engine = engine;
         _showResult = showResult;
+        BackCommand = new RelayCommand(_ => onBack?.Invoke());
 
         CategoryOptions =
         [
@@ -54,16 +58,17 @@ public class StartViewModel : ViewModelBase
         [
             new(null, "Не обрано"),
             new(256, "256 ГБ"),
-            new(500, "500 ГБ"),
+            new(512, "512 ГБ"),
             new(1000, "1 ТБ"),
             new(2000, "2 ТБ"),
+            new(4000, "4 ТБ"),
         ];
 
         CoolingOptions =
         [
             new(null, "Не обрано"),
-            new(CoolingType.Air, "Повітряне (кулер)"),
-            new(CoolingType.Liquid, "Рідинне (СРО)"),
+            new(CoolingType.Air, "Повітряне"),
+            new(CoolingType.Liquid, "Рідинне"),
         ];
 
         ColorOptions =
@@ -143,6 +148,7 @@ public class StartViewModel : ViewModelBase
     }
 
     public bool HasBudgetError => !string.IsNullOrEmpty(BudgetError);
+
     public OptionItem<Category?> SelectedCategory
     {
         get => _selectedCategory;
@@ -186,6 +192,7 @@ public class StartViewModel : ViewModelBase
     }
 
     public AsyncRelayCommand BuildCommand { get; }
+    public RelayCommand BackCommand { get; }
 
     private async Task BuildAsync()
     {
@@ -224,7 +231,6 @@ public class StartViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            // TODO(#32): коли BudgetCalculator повертатиме мінімальну суму, показати її тут
             ErrorMessage = $"Не вдалося підібрати збірку: {ex.Message}";
         }
         finally
@@ -241,4 +247,3 @@ public class StartViewModel : ViewModelBase
                && budget is > 0 and <= 10_000_000m;
     }
 }
-

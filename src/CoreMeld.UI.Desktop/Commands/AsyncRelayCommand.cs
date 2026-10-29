@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+using System.Diagnostics;
+using System.Windows.Input;
 
 namespace CoreMeld.UI.Desktop.Commands;
 
@@ -29,6 +30,10 @@ public class AsyncRelayCommand : ICommand
         try
         {
             await _execute();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"AsyncRelayCommand error: {ex}");
         }
         finally
         {

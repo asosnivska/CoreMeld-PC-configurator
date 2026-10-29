@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="CoreMeld.UI.Desktop.Views.StartView"
+<UserControl x:Class="CoreMeld.UI.Desktop.Views.StartView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -42,7 +42,8 @@
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0" Style="{StaticResource HeaderBar}">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="169,0,0,0">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="117,0,0,0">
+                <Button Style="{StaticResource BackButton}" ToolTip="До списку збірок" Command="{Binding BackCommand}" Margin="0,0,16,0"/>
                 <TextBlock Text="COREMELD" Style="{StaticResource LogoTitle}"/>
                 <TextBlock Text="PC CONFIGURATOR" Style="{StaticResource LogoSubtitle}"
                            VerticalAlignment="Bottom" Margin="10,0,0,4"/>

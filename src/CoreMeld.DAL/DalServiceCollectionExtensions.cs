@@ -7,10 +7,6 @@ namespace CoreMeld.DAL;
 
 public static class DalServiceCollectionExtensions
 {
-    /// <summary>
-    /// Registers DAL services with a fake-data switch (UseFakeData / USE_FAKE_DATA).
-    /// If true, registers InMemory repositories. If false, registers real PostgreSQL ADO.NET repositories.
-    /// </summary>
     public static IServiceCollection AddDataAccess(
         this IServiceCollection services,
         bool? useFakeData = null,
@@ -24,6 +20,7 @@ public static class DalServiceCollectionExtensions
         if (fakeDataSetting)
         {
             services.AddInMemoryRepositories();
+            services.AddSingleton<IBuildRepository, InMemoryBuildRepository>();
             return services;
         }
 
@@ -47,6 +44,7 @@ public static class DalServiceCollectionExtensions
         services.AddScoped<ICpuCoolerRepository, CpuCoolerRepository>();
         services.AddScoped<IPCCaseRepository, PCCaseRepository>();
         services.AddScoped<IPowerSupplyRepository, PowerSupplyRepository>();
+        services.AddScoped<IBuildRepository, BuildRepository>();
         return services;
     }
 }

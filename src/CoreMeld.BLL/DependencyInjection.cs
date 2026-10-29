@@ -12,7 +12,11 @@ public static class DependencyInjection
         string? connectionString = null)
     {
         services.AddDataAccess(useFakeData, connectionString);
+
+        services.AddTransient<IComponentService, ComponentService>();
+        services.AddTransient<IPCBuildService, PCBuildService>();
         services.AddTransient<IConfiguratorEngine, ConfiguratorEngine>();
+
         return services;
     }
 }

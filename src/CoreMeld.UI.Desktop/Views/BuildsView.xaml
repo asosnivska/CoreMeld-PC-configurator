@@ -1,0 +1,131 @@
+<UserControl x:Class="CoreMeld.UI.Desktop.Views.BuildsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             Background="White"
+             d:DesignHeight="900" d:DesignWidth="1440">
+
+    <UserControl.Resources>
+        <Style x:Key="BuildCard" TargetType="Border">
+            <Setter Property="Background" Value="#F8FAFC"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="18"/>
+            <Setter Property="Margin" Value="0,0,16,16"/>
+            <Setter Property="Width" Value="360"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top Header Bar -->
+        <Border Grid.Row="0" Style="{StaticResource HeaderBar}">
+            <Grid Margin="37,0,40,0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                    <TextBlock Text="COREMELD" Style="{StaticResource LogoTitle}" FontSize="24"/>
+                    <TextBlock Text="PC CONFIGURATOR" Style="{StaticResource LogoSubtitle}" FontSize="12"
+                               VerticalAlignment="Bottom" Margin="8,0,0,4"/>
+                </StackPanel>
+
+                <TextBlock Text="Каталог збірок" Style="{StaticResource PageTitle}"
+                           Foreground="White" FontSize="22" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                <Button Content="Конструктор" Style="{StaticResource PrimaryButton}"
+                        Command="{Binding GoToConstructorCommand}"
+                        HorizontalAlignment="Right" VerticalAlignment="Center"
+                        Padding="22,8" FontSize="13"/>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel MaxWidth="1200" Margin="40,30,40,50">
+
+                <!-- Section: My Saved Builds -->
+                <DockPanel Margin="0,0,0,14">
+                    <TextBlock Text="Мої збережені збірки" FontSize="20" FontWeight="Bold" Foreground="#1E293B"/>
+                </DockPanel>
+
+                <!-- Empty state for My Builds -->
+                <Border Background="#F1F5F9" CornerRadius="6" Padding="20,16" Margin="0,0,0,24">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasMyBuilds}" Value="False">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <TextBlock Text="У вас поки немає збережених збірок. Створіть власну збірку в Конструкторі та натисніть «Зберегти збірку»."
+                               Foreground="#64748B" FontSize="14"/>
+                </Border>
+
+                <!-- Cards for My Builds -->
+                <ItemsControl ItemsSource="{Binding MySavedBuilds}" Margin="0,0,0,24">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource BuildCard}">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}" FontSize="15" FontWeight="SemiBold"
+                                               Foreground="#0F172A" TextWrapping="Wrap" MaxHeight="44" TextTrimming="CharacterEllipsis"/>
+                                    <DockPanel Margin="0,12,0,8">
+                                        <TextBlock Text="{Binding PriceText}" FontSize="18" FontWeight="Bold" Foreground="#0284C7"/>
+                                    </DockPanel>
+                                    <TextBlock Text="{Binding DateText}" FontSize="11" Foreground="#94A3B8" Margin="0,0,0,12"/>
+                                    <Button Content="Відкрити збірку" Style="{StaticResource PrimaryButton}"
+                                            Command="{Binding OpenCommand}"
+                                            Padding="16,6" FontSize="12" HorizontalAlignment="Stretch"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <Separator Margin="0,10,0,24" Background="#E2E8F0"/>
+
+                <!-- Section: Top Builds From DB -->
+                <TextBlock Text="Популярні збірки (Топ із бази даних)" FontSize="20" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,14"/>
+
+                <ItemsControl ItemsSource="{Binding TopBuilds}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource BuildCard}">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}" FontSize="15" FontWeight="SemiBold"
+                                               Foreground="#0F172A" TextWrapping="Wrap" MaxHeight="44" TextTrimming="CharacterEllipsis"/>
+                                    <DockPanel Margin="0,12,0,8">
+                                        <TextBlock Text="{Binding PriceText}" FontSize="18" FontWeight="Bold" Foreground="#0284C7"/>
+                                    </DockPanel>
+                                    <TextBlock Text="{Binding DateText}" FontSize="11" Foreground="#94A3B8" Margin="0,0,0,12"/>
+                                    <Button Content="Відкрити збірку" Style="{StaticResource PrimaryButton}"
+                                            Command="{Binding OpenCommand}"
+                                            Padding="16,6" FontSize="12" HorizontalAlignment="Stretch"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

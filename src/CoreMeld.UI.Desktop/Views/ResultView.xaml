@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="CoreMeld.UI.Desktop.Views.ResultView"
+<UserControl x:Class="CoreMeld.UI.Desktop.Views.ResultView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -81,7 +81,7 @@
                 <TextBlock Text="Конфігурація готова!" Style="{StaticResource PageTitle}"/>
 
                 <Border Width="585" Height="10" Margin="0,16,0,6"
-        BorderBrush="{StaticResource NavyBrush}" BorderThickness="1">
+                        BorderBrush="{StaticResource NavyBrush}" BorderThickness="1">
                     <ItemsControl ItemsSource="{Binding BudgetSegments}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -109,15 +109,16 @@
                                 
                                 <TextBlock Text="{Binding PriceText}" Style="{StaticResource PriceText}"/>
                                 <Button Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"
-                        Command="{Binding DataContext.ReplaceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                        CommandParameter="{Binding Category}"/>
+                                        Command="{Binding DataContext.ReplaceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding Category}"/>
                                 <TextBlock Text="{Binding Name}" Style="{StaticResource ComponentName}"/>
                             </DockPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <Button Content="Скопіювати конфігурацію" Style="{StaticResource PrimaryButton}"
+                <Button Content="Зберегти збірку" Style="{StaticResource PrimaryButton}"
+                        Command="{Binding SaveBuildCommand}"
                         FontSize="16" Padding="44,12" HorizontalAlignment="Center"/>
 
             </StackPanel>

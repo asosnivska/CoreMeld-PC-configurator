@@ -11,7 +11,7 @@ public class MotherboardRepository : IMotherboardRepository
 
     private const string BaseSelect = @"
         SELECT c.id, c.name, c.price, c.brand, c.color, c.image_url, c.category_id,
-               mb.socket_id, mb.form_factor_id, mb.chipset, mb.memory_type, mb.memory_slots, mb.max_memory_gb, mb.has_wifi
+               mb.socket_id, mb.form_factor_id, mb.chipset, mb.memory_type, mb.memory_slots, mb.max_memory_gb
         FROM components c
         JOIN motherboards mb ON c.id = mb.component_id";
 
@@ -102,12 +102,6 @@ public class MotherboardRepository : IMotherboardRepository
             command.Parameters.AddWithValue("minSupportedMemoryGb", minSupportedMemoryGb.Value);
         }
 
-        if (hasWifi.HasValue)
-        {
-            sql.Append(" AND mb.has_wifi = @hasWifi");
-            command.Parameters.AddWithValue("hasWifi", hasWifi.Value);
-        }
-
         RepositoryQueryHelper.ApplyCommonFilters(sql, command, minPrice, maxPrice, brands, nameContains, limit);
 
         command.CommandText = sql.ToString();
@@ -123,10 +117,7 @@ public class MotherboardRepository : IMotherboardRepository
 
     private static Motherboard MapMotherboard(NpgsqlDataReader reader)
     {
-        var mb = new Motherboard
-        {
-            HasWifi = reader.GetBoolean(13)
-        };
+        var mb = new Motherboard();
         RepositoryQueryHelper.PopulateComponent(mb, reader);
         mb.SocketId = reader.GetInt32(7);
         mb.FormFactorId = reader.GetInt32(8);
@@ -138,4 +129,3 @@ public class MotherboardRepository : IMotherboardRepository
         return mb;
     }
 }
-
