@@ -4,4 +4,5 @@ public class PCCase: Component
 {
     public int MaxGpuLengthMm { get; set; }
     public int MaxCpuCoolerHeightMm { get; set; }
+    public int? MaxBoardFormFactorId { get; set; }
 }
