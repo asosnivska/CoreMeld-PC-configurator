@@ -1,0 +1,20 @@
+﻿[
+  {
+    "Id": 1,
+    "Name": "ATX",
+    "LengthMm": 305,
+    "WidthMm": 244
+  },
+  {
+    "Id": 2,
+    "Name": "Micro-ATX",
+    "LengthMm": 244,
+    "WidthMm": 244
+  },
+  {
+    "Id": 3,
+    "Name": "Mini-ITX",
+    "LengthMm": 170,
+    "WidthMm": 170
+  }
+]
