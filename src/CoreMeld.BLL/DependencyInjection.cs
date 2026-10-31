@@ -21,6 +21,7 @@ public static class DependencyInjection
 
         services.AddTransient<ISpaceControlService, SpaceControlService>();
         services.AddTransient<ITdpCalculator, TdpCalculator>();
+        services.AddTransient<ICompatibilityChecker, CompatibilityChecker>();
         return services;
     }
 }
