@@ -11,7 +11,7 @@ public class ConfiguratorEngine:IConfiguratorEngine
         throw new NotImplementedException();
     }
 
-    public Task<PCBuildDto> ReplaceComponent(PCBuild currentBuild, ComponentCategory category, Component newComponent)
+    public PCBuildDto ReplaceComponent(PCBuild currentBuild, ComponentCategory category, Component newComponent)
     {
         throw new NotImplementedException();
     }
