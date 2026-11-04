@@ -6,12 +6,12 @@ namespace CoreMeld.BLL.Services;
 
 public class ConfiguratorEngine:IConfiguratorEngine
 {
-    public PCBuildDto GenerateBuild(BuildRequestDto request)
+    public Task<PCBuildDto> GenerateBuild(BuildRequestDto request)
     {
         throw new NotImplementedException();
     }
 
-    public PCBuildDto ReplaceComponent(PCBuild currentBuild, ComponentCategory category, Component newComponent)
+    public Task<PCBuildDto> ReplaceComponent(PCBuild currentBuild, ComponentCategory category, Component newComponent)
     {
         throw new NotImplementedException();
     }
