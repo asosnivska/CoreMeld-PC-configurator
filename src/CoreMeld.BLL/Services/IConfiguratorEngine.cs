@@ -6,7 +6,7 @@ namespace CoreMeld.BLL.Services;
 
 public interface IConfiguratorEngine
 {
-    Task<PCBuildDto> GenerateBuild(BuildRequestDto request);
+    Task<PCBuildDto> GenerateBuildAsync(BuildRequestDto request);
     PCBuildDto ReplaceComponent(
         PCBuild currentBuild,
         ComponentCategory category,
