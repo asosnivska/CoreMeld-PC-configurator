@@ -13,6 +13,8 @@
             <Setter Property="Foreground" Value="{StaticResource InfoBrush}"/>
             <Setter Property="Margin" Value="8,0,0,0"/>
             <Setter Property="Cursor" Value="Help"/>
+            <Setter Property="ToolTipService.ShowDuration" Value="15000"/>
+            <Setter Property="ToolTipService.InitialShowDelay" Value="0"/>
         </Style>
         <Style x:Key="AddButton" TargetType="Button">
             <Setter Property="Width" Value="90"/>
@@ -49,7 +51,7 @@
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <Border Background="{StaticResource PanelBrush}" MaxWidth="742"
-            Margin="30,36,30,60" Padding="30,24,30,40" Height="886">
+            Margin="30,36,30,60" Padding="30,24,30,40" MinHeight="886">
                 <StackPanel>
 
                     <TextBlock Text="Створіть свій ідеальний ПК" Style="{StaticResource PageTitle}"/>
@@ -57,22 +59,51 @@
                        Foreground="{StaticResource TextBrush}" HorizontalAlignment="Center"
                        TextWrapping="Wrap" TextAlignment="Center" Margin="0,12,0,0"/>
 
-                    <Grid Width="220" Margin="0,18,0,26">
-                        <Border Background="{StaticResource DarkFieldBrush}" CornerRadius="5">
-                            <TextBox Height="38" Text="Введіть бюджет"
-                                 Background="Transparent" Foreground="White"
-                                 BorderThickness="0" FontWeight="SemiBold"
-                                 Padding="12,0,50,0" VerticalContentAlignment="Center"/>
+                    <Grid Width="220" Margin="0,18,0,0">
+                        <Border Background="{StaticResource DarkFieldBrush}" CornerRadius="5" BorderThickness="1">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasBudgetError}" Value="True">
+                                            <Setter Property="BorderBrush" Value="#C0392B"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBox x:Name="BudgetBox" Height="38"
+                 Text="{Binding BudgetText, UpdateSourceTrigger=PropertyChanged}"
+                 Background="Transparent" Foreground="White" CaretBrush="White"
+                 BorderThickness="0" FontWeight="SemiBold"
+                 Padding="12,0,50,0" VerticalContentAlignment="Center"/>
                         </Border>
-                        
+
+                        <TextBlock Text="Введіть бюджет" Foreground="#D0D0D0" FontWeight="SemiBold"
+               VerticalAlignment="Center" Margin="13,0,50,0" IsHitTestVisible="False">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=BudgetBox}" Value="">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
                         <TextBlock Text="UAH" Foreground="White" VerticalAlignment="Center"
-                           HorizontalAlignment="Right" Margin="0,0,12,0" IsHitTestVisible="False"/>
+               HorizontalAlignment="Right" Margin="0,0,12,0" IsHitTestVisible="False"/>
                     </Grid>
 
+                    <TextBlock Width="220" Height="18" Margin="0,4,0,4"
+                               Text="{Binding BudgetError}" Foreground="#C0392B" FontSize="12"/>
+
                     <TextBlock Text="Оберіть категорію" Style="{StaticResource SectionTitle}"/>
-                    <ComboBox Style="{StaticResource DropdownField}" SelectionChanged="ComboBox_SelectionChanged">
-                        <ComboBoxItem Content="Категорія"/>
-                    </ComboBox>
+                    <ComboBox Style="{StaticResource DropdownField}"
+                              ItemsSource="{Binding CategoryOptions}"
+                              SelectedItem="{Binding SelectedCategory}"
+                              DisplayMemberPath="Title"/>
 
                     <Expander Style="{StaticResource SectionExpander}">
                         <Expander.Header>
@@ -103,38 +134,74 @@
                     </Expander>
 
                     <Expander Style="{StaticResource SectionExpander}" Margin="0,30,0,0">
+                        
                         <Expander.Header>
                             <TextBlock Text="Додаткові фільтри" Style="{StaticResource SectionTitle}"/>
                         </Expander.Header>
+                        
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Тип пристрою зберігання даних" Foreground="{StaticResource TextBrush}"/>
-                                <TextBlock Style="{StaticResource InfoIcon}" ToolTip="Підказка буде додана пізніше"/>
+                                <TextBlock Text="Обсяг оперативної пам'яті" Foreground="{StaticResource TextBrush}"/>
+                                <TextBlock Style="{StaticResource InfoIcon}" ToolTip="{StaticResource Hint.Ram}"/>
                             </StackPanel>
-                            <ComboBox Style="{StaticResource DropdownField}">
-                                <ComboBoxItem Content="Оберіть зі списку"/>
-                            </ComboBox>
+                            <ComboBox Style="{StaticResource DropdownField}"
+                                      ItemsSource="{Binding RamOptions}"
+                                      SelectedItem="{Binding SelectedRam}"
+                                      DisplayMemberPath="Title"/>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Тип пристрою зберігання даних" Foreground="{StaticResource TextBrush}"/>
+                                <TextBlock Style="{StaticResource InfoIcon}" ToolTip="{StaticResource Hint.StorageType}"/>
+                            </StackPanel>
+                            <ComboBox Style="{StaticResource DropdownField}"
+                                      ItemsSource="{Binding StorageTypeOptions}"
+                                      SelectedItem="{Binding SelectedStorageType}"
+                                      DisplayMemberPath="Title"/>
 
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Об'єм пристрою зберігання даних" Foreground="{StaticResource TextBrush}"/>
-                                <TextBlock Style="{StaticResource InfoIcon}" ToolTip="Підказка буде додана пізніше"/>
+                                <TextBlock Style="{StaticResource InfoIcon}" ToolTip="{StaticResource Hint.StorageCapacity}"/>
                             </StackPanel>
-                            <ComboBox Style="{StaticResource DropdownField}">
-                                <ComboBoxItem Content="Оберіть зі списку"/>
-                            </ComboBox>
+                            <ComboBox Style="{StaticResource DropdownField}"
+                                      ItemsSource="{Binding StorageCapacityOptions}"
+                                      SelectedItem="{Binding SelectedStorageCapacity}"
+                                      DisplayMemberPath="Title"/>
 
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Система охолодження" Foreground="{StaticResource TextBrush}"/>
-                                <TextBlock Style="{StaticResource InfoIcon}" ToolTip="Підказка буде додана пізніше"/>
+                                <TextBlock Style="{StaticResource InfoIcon}" ToolTip="{StaticResource Hint.Cooling}"/>
                             </StackPanel>
-                            <ComboBox Style="{StaticResource DropdownField}">
-                                <ComboBoxItem Content="Оберіть зі списку"/>
-                            </ComboBox>
+                            <ComboBox Style="{StaticResource DropdownField}"
+                                      ItemsSource="{Binding CoolingOptions}"
+                                      SelectedItem="{Binding SelectedCooling}"
+                                      DisplayMemberPath="Title"/>
+
+                            <TextBlock Text="Колір корпусу" Foreground="{StaticResource TextBrush}"/>
+                            <ComboBox Style="{StaticResource DropdownField}"
+                                      ItemsSource="{Binding ColorOptions}"
+                                      SelectedItem="{Binding SelectedColor}"
+                                      DisplayMemberPath="Title"/>
+
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox Content="Потрібен Wi-Fi" IsChecked="{Binding RequireWifi}"
+                                          Foreground="{StaticResource TextBrush}" VerticalContentAlignment="Center"/>
+                                <TextBlock Style="{StaticResource InfoIcon}" ToolTip="{StaticResource Hint.Wifi}"/>
+                            </StackPanel>
+
                         </StackPanel>
                     </Expander>
 
                     <Button Content="Зібрати ПК" Style="{StaticResource PrimaryButton}"
-                    HorizontalAlignment="Center" Margin="0,24,0,0"/>
+                            Command="{Binding BuildCommand}" 
+                            HorizontalAlignment="Center" Margin="0,24,0,0"/>
+                    
+                    <TextBlock Text="Підбираємо збірку…" Foreground="{StaticResource TextBrush}"
+                               HorizontalAlignment="Center" Margin="0,12,0,0"
+                               Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}"/>         
+
+                    <TextBlock Text="{Binding ErrorMessage}" Foreground="#C0392B" TextWrapping="Wrap"
+                               TextAlignment="Center" HorizontalAlignment="Center" Margin="0,12,0,0"
+                               Visibility="{Binding HasError, Converter={StaticResource BoolToVisibility}}"/>       
 
                 </StackPanel>
             </Border>
