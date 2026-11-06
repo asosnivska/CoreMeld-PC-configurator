@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using CoreMeld.BLL.DTO;
 using CoreMeld.BLL.Services;
+using CoreMeld.Domain.Enums;
 using CoreMeld.Domain.Models;
 using CoreMeld.UI.Desktop.Commands;
 
@@ -215,7 +216,7 @@ public class StartViewModel : ViewModelBase
         IsBusy = true;
         try
         {
-            var build = await Task.Run(() => _engine.GenerateBuild(request));
+            var build = await Task.Run(() => _engine.GenerateBuildAsync(request));
             _showResult(build, budget);
         }
         catch (NotImplementedException)

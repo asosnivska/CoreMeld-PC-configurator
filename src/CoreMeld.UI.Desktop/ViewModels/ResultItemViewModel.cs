@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using CoreMeld.Domain.Models;
 using System.Windows;
+using CoreMeld.Domain.Enums;
 
 namespace CoreMeld.UI.Desktop.ViewModels;
 
