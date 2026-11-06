@@ -35,9 +35,9 @@ INSERT INTO components (id, category_id, name, price, brand, color, image_url)
 VALUES (2, 3, 'GeForce RTX 4060 Dual', 13500.00, 'ASUS', 'Black', 'https://example.com/gpu.jpg')
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO gpus (component_id, vram_gb, memory_type, tdp_watts, length_mm, recommended_psu_watts)
-VALUES (2, 8, 'GDDR6', 115, 227, 550)
-ON CONFLICT (component_id) DO NOTHING;
+INSERT INTO gpus (component_id, vram_gb, memory_type, tdp_watts, length_mm, recommended_psu_watts, power_connector_type, power_connector_count)
+VALUES (2, 8, 'GDDR6', 115, 227, 550, 2, 1)
+    ON CONFLICT (component_id) DO NOTHING;
 
 INSERT INTO components (id, category_id, name, price, brand, color, image_url)
 VALUES (3, 4, 'Fury Beast 16GB DDR4', 1600.00, 'Kingston', 'Black', 'https://example.com/ram.jpg')
@@ -58,6 +58,14 @@ ON CONFLICT (component_id) DO NOTHING;
 INSERT INTO cpu_cooler_sockets (cooler_id, socket_id) VALUES
 (4, 1), (4, 2), (4, 3)
 ON CONFLICT DO NOTHING;
+
+INSERT INTO components (id, category_id, name, price, brand, color, image_url)
+VALUES (5, 8, 'Corsair CX650', 2300.00, 'Corsair', 'Black', 'https://example.com/psu.jpg')
+    ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO power_supplies (component_id, form_factor_id, wattage, efficiency_rating, pcie_8pin_count, has_12vhpwr)
+VALUES (5, 1, 650, '80+ Bronze', 2, FALSE)
+    ON CONFLICT (component_id) DO NOTHING;
 
 SELECT setval('categories_id_seq', (SELECT MAX(id) FROM categories));
 SELECT setval('sockets_id_seq', (SELECT MAX(id) FROM sockets));

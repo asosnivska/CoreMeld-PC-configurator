@@ -1,4 +1,5 @@
 using System.Text;
+using CoreMeld.Domain.Enums;
 using CoreMeld.Domain.Interfaces.Repositories;
 using CoreMeld.Domain.Models;
 using Npgsql;

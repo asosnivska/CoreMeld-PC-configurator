@@ -1,4 +1,6 @@
+using CoreMeld.Domain.Enums;
 using CoreMeld.Domain.Models;
+
 
 namespace CoreMeld.Domain.Interfaces.Repositories;
 
@@ -6,6 +8,8 @@ public interface IComponentRepository
 {
     Task<IEnumerable<Component>> GetAllAsync();
     Task<Component?> GetByIdAsync(int id);
+
+    Task<decimal?> GetMinPriceAsync(ComponentCategory category);
     Task<IEnumerable<Component>> GetByCategoryAsync(ComponentCategory category)
         => Task.FromResult<IEnumerable<Component>>(Enumerable.Empty<Component>());
 

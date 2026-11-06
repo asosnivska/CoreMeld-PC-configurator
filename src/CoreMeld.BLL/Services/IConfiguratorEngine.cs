@@ -1,11 +1,12 @@
 ﻿using CoreMeld.BLL.DTO;
+using CoreMeld.Domain.Enums;
 using CoreMeld.Domain.Models;
 
 namespace CoreMeld.BLL.Services;
 
 public interface IConfiguratorEngine
 {
-    PCBuildDto GenerateBuild(BuildRequestDto request);
+    Task<PCBuildDto> GenerateBuildAsync(BuildRequestDto request);
     PCBuildDto ReplaceComponent(
         PCBuild currentBuild,
         ComponentCategory category,

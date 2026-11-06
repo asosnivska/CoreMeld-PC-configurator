@@ -4,7 +4,7 @@ public class PCBuild
 {
     public Cpu Cpu { get; set; }
     public Motherboard Motherboard { get; set; }
-    public Gpu Gpu { get; set; }
+    public Gpu? Gpu { get; set; }
     public Ram Ram { get; set; }
     public Storage Storage { get; set; }
     public CpuCooler CpuCooler { get; set; }

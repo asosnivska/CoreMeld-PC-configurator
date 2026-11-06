@@ -1,5 +1,6 @@
 ﻿using CoreMeld.BLL.DTO;
 using CoreMeld.BLL.Services;
+using CoreMeld.Domain.Enums;
 using CoreMeld.Domain.Models;
 
 namespace CoreMeld.UI.Desktop.ViewModels;

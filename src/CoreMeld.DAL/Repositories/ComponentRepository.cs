@@ -1,6 +1,7 @@
-using System.Text;
 using CoreMeld.Domain.Interfaces.Repositories;
 using CoreMeld.Domain.Models;
+using System.Text;
+using CoreMeld.Domain.Enums;
 using Npgsql;
 
 namespace CoreMeld.DAL.Repositories;
@@ -178,5 +179,17 @@ public class ComponentRepository : IComponentRepository
         }
 
         return components;
+    }
+    public async Task<decimal?> GetMinPriceAsync(ComponentCategory category)
+    {
+        await using var connection = _dbManager.CreateConnection();
+        await connection.OpenAsync();
+
+        await using var command = new NpgsqlCommand(
+            "SELECT MIN(price) FROM components WHERE category_id = @categoryId", connection);
+        command.Parameters.AddWithValue("categoryId", (int)category);
+
+        var result = await command.ExecuteScalarAsync();
+        return result is null or DBNull ? null : (decimal)result;
     }
 }

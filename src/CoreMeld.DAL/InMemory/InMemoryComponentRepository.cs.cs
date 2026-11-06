@@ -1,4 +1,5 @@
-﻿using CoreMeld.Domain.Interfaces.Repositories;
+﻿using CoreMeld.Domain.Enums;
+using CoreMeld.Domain.Interfaces.Repositories;
 using CoreMeld.Domain.Models;
 
 namespace CoreMeld.DAL.InMemory;
@@ -10,4 +11,9 @@ public class InMemoryComponentRepository : IComponentRepository
 
     public Task<Component?> GetByIdAsync(int id)
         => Task.FromResult(InMemoryCatalog.All.FirstOrDefault(c => c.Id == id));
+
+    public Task<decimal?> GetMinPriceAsync(ComponentCategory category)
+    {
+        throw new NotImplementedException();
+    }
 }

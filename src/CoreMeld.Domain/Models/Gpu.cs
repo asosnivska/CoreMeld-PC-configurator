@@ -1,3 +1,5 @@
+using CoreMeld.Domain.Enums;
+
 namespace CoreMeld.Domain.Models;
 
 public class Gpu: Component
@@ -7,5 +9,7 @@ public class Gpu: Component
     public int LengthMm { get; set; }
     public int RecommendedPsuWatts { get; set; }
     public VideoMemoryType MemoryType { get; set; }
+    public PowerConnectorType? PowerConnectorType { get; set; }
+    public int? PowerConnectorCount { get; set; }
 
 }

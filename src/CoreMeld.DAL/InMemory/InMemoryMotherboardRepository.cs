@@ -1,4 +1,5 @@
-﻿using CoreMeld.Domain.Interfaces.Repositories;
+﻿using CoreMeld.Domain.Enums;
+using CoreMeld.Domain.Interfaces.Repositories;
 using CoreMeld.Domain.Models;
 
 namespace CoreMeld.DAL.InMemory;

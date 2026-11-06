@@ -1,4 +1,5 @@
-﻿using CoreMeld.Domain.Models;
+﻿using CoreMeld.Domain.Enums;
+using CoreMeld.Domain.Models;
 
 namespace CoreMeld.DAL.InMemory;
 
@@ -28,9 +29,9 @@ public static class InMemoryCatalog
 
     public static IReadOnlyList<Ram> Rams { get; } = new List<Ram>
     {
-        new() { Id = 301, CategoryId = (int)ComponentCategory.Ram, Name = "Kingston Fury Beast 16GB (2x8) DDR4-3200", Brand = "Kingston", Color = "Black", Price = 1600m, RamMemoryType = "DDR4", CapacityGb = 16, ModuleCount = 2, FrequencyMhz = 3200 },
-        new() { Id = 302, CategoryId = (int)ComponentCategory.Ram, Name = "G.Skill Ripjaws V 32GB (2x16) DDR4-3600", Brand = "G.Skill", Color = "Black", Price = 3300m, RamMemoryType = "DDR4", CapacityGb = 32, ModuleCount = 2, FrequencyMhz = 3600 },
-        new() { Id = 303, CategoryId = (int)ComponentCategory.Ram, Name = "Kingston Fury Beast 32GB (2x16) DDR5-5600", Brand = "Kingston", Color = "Black", Price = 3900m, RamMemoryType = "DDR5", CapacityGb = 32, ModuleCount = 2, FrequencyMhz = 5600 },
+        new() { Id = 301, CategoryId = (int)ComponentCategory.Ram, Name = "Kingston Fury Beast 16GB (2x8) DDR4-3200", Brand = "Kingston", Color = "Black", Price = 1600m, RamMemoryType = RamMemoryType.DDR4, CapacityGb = 16, ModuleCount = 2, FrequencyMhz = 3200 },
+        new() { Id = 302, CategoryId = (int)ComponentCategory.Ram, Name = "G.Skill Ripjaws V 32GB (2x16) DDR4-3600", Brand = "G.Skill", Color = "Black", Price = 3300m, RamMemoryType = RamMemoryType.DDR4, CapacityGb = 32, ModuleCount = 2, FrequencyMhz = 3600 },
+        new() { Id = 303, CategoryId = (int)ComponentCategory.Ram, Name = "Kingston Fury Beast 32GB (2x16) DDR5-5600", Brand = "Kingston", Color = "Black", Price = 3900m, RamMemoryType = RamMemoryType.DDR5, CapacityGb = 32, ModuleCount = 2, FrequencyMhz = 5600 },
     };
 
     public static IReadOnlyList<Gpu> Gpus { get; } = new List<Gpu>

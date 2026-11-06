@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using CoreMeld.BLL.DTO;
+using CoreMeld.Domain.Enums;
 using CoreMeld.Domain.Models;
 using CoreMeld.UI.Desktop.Commands;
 

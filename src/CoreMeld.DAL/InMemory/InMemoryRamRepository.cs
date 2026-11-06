@@ -1,4 +1,5 @@
-﻿using CoreMeld.Domain.Interfaces.Repositories;
+﻿using CoreMeld.Domain.Enums;
+using CoreMeld.Domain.Interfaces.Repositories;
 using CoreMeld.Domain.Models;
 
 namespace CoreMeld.DAL.InMemory;
@@ -24,7 +25,11 @@ public class InMemoryRamRepository : IRamRepository
         if (memoryType is not null)
         {
             var names = memoryType.Select(t => t.ToString()).ToHashSet(StringComparer.OrdinalIgnoreCase);
-            if (names.Count > 0) query = query.Where(r => names.Contains(r.RamMemoryType));
+            if (memoryType is not null)
+            {
+                var types = memoryType.ToHashSet();
+                if (types.Count > 0) query = query.Where(r => types.Contains(r.RamMemoryType));
+            }
         }
         if (minCapacityGb.HasValue) query = query.Where(r => r.CapacityGb >= minCapacityGb.Value);
         if (maxModuleCount.HasValue) query = query.Where(r => r.ModuleCount <= maxModuleCount.Value);
