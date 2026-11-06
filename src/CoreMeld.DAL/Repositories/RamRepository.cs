@@ -1,4 +1,5 @@
 using System.Text;
+using CoreMeld.Domain.Enums;
 using CoreMeld.Domain.Interfaces.Repositories;
 using CoreMeld.Domain.Models;
 using Npgsql;
@@ -104,7 +105,7 @@ public class RamRepository : IRamRepository
     {
         var ram = new Ram();
         RepositoryQueryHelper.PopulateComponent(ram, reader);
-        ram.RamMemoryType = reader.GetString(7);
+        ram.RamMemoryType = Enum.Parse<RamMemoryType>(reader.GetString(7), ignoreCase: true);
         ram.CapacityGb = reader.GetInt32(8);
         ram.ModuleCount = reader.GetInt32(9);
         ram.FrequencyMhz = reader.GetInt32(10);
