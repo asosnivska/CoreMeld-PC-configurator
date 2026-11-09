@@ -62,4 +62,12 @@ public class CompatibilityChecker: ICompatibilityChecker
                 throw new InvalidOperationException($"Невідомий тип роз'єму: {gpu.PowerConnectorType.Value}.");
         }
     }
+
+    public bool IsCoolerCompatible(Cpu cpu, CpuCooler cooler)
+    {
+        ArgumentNullException.ThrowIfNull(cpu);
+        ArgumentNullException.ThrowIfNull(cooler);
+
+        return cpu.SocketId == cooler.SocketId && cooler.TdpRatingWatts >= cpu.TdpWatts;
+    }
 }
