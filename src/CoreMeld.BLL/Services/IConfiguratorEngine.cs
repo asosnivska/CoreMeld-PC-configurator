@@ -11,4 +11,6 @@ public interface IConfiguratorEngine
         PCBuild currentBuild,
         ComponentCategory category,
         Component newComponent);
+    
+    IReadOnlyList<Component> FilterCompatibleComponents(IEnumerable<Component> pool, PCBuild currentBuild);
 }
