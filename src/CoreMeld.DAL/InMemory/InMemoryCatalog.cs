@@ -36,9 +36,9 @@ public static class InMemoryCatalog
 
     public static IReadOnlyList<Gpu> Gpus { get; } = new List<Gpu>
     {
-        new() { Id = 401, CategoryId = (int)ComponentCategory.Gpu, Name = "MSI GeForce GTX 1650 D6 Ventus XS 4GB", Brand = "MSI", Color = "Black", Price = 6200m, VramGb = 4, TdpWatts = 75, LengthMm = 204, RecommendedPsuWatts = 300, MemoryType = VideoMemoryType.GDDR6 },
-        new() { Id = 402, CategoryId = (int)ComponentCategory.Gpu, Name = "ASUS GeForce RTX 4060 Dual 8GB", Brand = "ASUS", Color = "Black", Price = 13500m, VramGb = 8, TdpWatts = 115, LengthMm = 227, RecommendedPsuWatts = 550, MemoryType = VideoMemoryType.GDDR6 },
-        new() { Id = 403, CategoryId = (int)ComponentCategory.Gpu, Name = "Gigabyte GeForce RTX 4070 SUPER WINDFORCE OC 12GB", Brand = "Gigabyte", Color = "Black", Price = 28500m, VramGb = 12, TdpWatts = 220, LengthMm = 261, RecommendedPsuWatts = 650, MemoryType = VideoMemoryType.GDDR6X },
+        new() { Id = 401, CategoryId = (int)ComponentCategory.Gpu, Name = "MSI GeForce GTX 1650 D6 Ventus XS 4GB", Brand = "MSI", Color = "Black", Price = 6200m, VramGb = 4, TdpWatts = 75, LengthMm = 204, RecommendedPsuWatts = 300, MemoryType = VideoMemoryType.GDDR6, PowerConnectorType = PowerConnectorType.None, PowerConnectorCount = 0 },
+        new() { Id = 402, CategoryId = (int)ComponentCategory.Gpu, Name = "ASUS GeForce RTX 4060 Dual 8GB", Brand = "ASUS", Color = "Black", Price = 13500m, VramGb = 8, TdpWatts = 115, LengthMm = 227, RecommendedPsuWatts = 550, MemoryType = VideoMemoryType.GDDR6, PowerConnectorType = PowerConnectorType.Pin8, PowerConnectorCount = 1 },
+        new() { Id = 403, CategoryId = (int)ComponentCategory.Gpu, Name = "Gigabyte GeForce RTX 4070 SUPER WINDFORCE OC 12GB", Brand = "Gigabyte", Color = "Black", Price = 28500m, VramGb = 12, TdpWatts = 220, LengthMm = 261, RecommendedPsuWatts = 650, MemoryType = VideoMemoryType.GDDR6X, PowerConnectorType = PowerConnectorType.Pin8, PowerConnectorCount = 1 },
     };
 
     public static IReadOnlyList<Storage> Storages { get; } = new List<Storage>
@@ -57,14 +57,14 @@ public static class InMemoryCatalog
 
     public static IReadOnlyList<PCCase> Cases { get; } = new List<PCCase>
     {
-        new() { Id = 701, CategoryId = (int)ComponentCategory.Case, Name = "Gamemax Destroyer MB", Brand = "Gamemax", Color = "Black", Price = 1755m, MaxGpuLengthMm = 300, MaxCpuCoolerHeightMm = 155 },
-        new() { Id = 702, CategoryId = (int)ComponentCategory.Case, Name = "DeepCool CC560", Brand = "DeepCool", Color = "Black", Price = 2300m, MaxGpuLengthMm = 370, MaxCpuCoolerHeightMm = 163 },
+        new() { Id = 701, CategoryId = (int)ComponentCategory.Case, Name = "Gamemax Destroyer MB", Brand = "Gamemax", Color = "Black", Price = 1755m, MaxGpuLengthMm = 300, MaxCpuCoolerHeightMm = 155, MaxBoardFormFactorId = 2 },
+        new() { Id = 702, CategoryId = (int)ComponentCategory.Case, Name = "DeepCool CC560", Brand = "DeepCool", Color = "Black", Price = 2300m, MaxGpuLengthMm = 370, MaxCpuCoolerHeightMm = 163, MaxBoardFormFactorId = 1 },
     };
 
     public static IReadOnlyList<PowerSupply> PowerSupplies { get; } = new List<PowerSupply>
     {
-        new() { Id = 801, CategoryId = (int)ComponentCategory.PowerSupply, Name = "Chieftec Polaris 3.0 550W", Brand = "Chieftec", Color = "Black", Price = 1900m, FormFactorId = 1, Wattage = 550, EfficiencyRating = "80+ Bronze" },
-        new() { Id = 802, CategoryId = (int)ComponentCategory.PowerSupply, Name = "Chieftec PPG-850-C", Brand = "Chieftec", Color = "Black", Price = 4769m, FormFactorId = 1, Wattage = 850, EfficiencyRating = "80+ Gold" },
+        new() { Id = 801, CategoryId = (int)ComponentCategory.PowerSupply, Name = "Chieftec Polaris 3.0 550W", Brand = "Chieftec", Color = "Black", Price = 1900m, FormFactorId = 1, Wattage = 550, EfficiencyRating = "80+ Bronze", Pcie8PinCount = 2, Has12Vhpwr = false },
+        new() { Id = 802, CategoryId = (int)ComponentCategory.PowerSupply, Name = "Chieftec PPG-850-C", Brand = "Chieftec", Color = "Black", Price = 4769m, FormFactorId = 1, Wattage = 850, EfficiencyRating = "80+ Gold", Pcie8PinCount = 4, Has12Vhpwr = false },
     };
 
     public static IReadOnlyList<Component> All { get; } =

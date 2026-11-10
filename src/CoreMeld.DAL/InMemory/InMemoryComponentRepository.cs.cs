@@ -14,6 +14,11 @@ public class InMemoryComponentRepository : IComponentRepository
 
     public Task<decimal?> GetMinPriceAsync(ComponentCategory category)
     {
-        throw new NotImplementedException();
+        var prices = InMemoryCatalog.All
+            .Where(c => c.CategoryId == (int)category)
+            .Select(c => c.Price)
+            .ToList();
+
+        return Task.FromResult<decimal?>(prices.Count == 0 ? null : prices.Min());
     }
 }
