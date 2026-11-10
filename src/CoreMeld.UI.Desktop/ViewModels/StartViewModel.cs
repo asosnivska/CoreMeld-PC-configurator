@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
+using System.Diagnostics;
 using CoreMeld.BLL.DTO;
+using CoreMeld.BLL.Exceptions;
 using CoreMeld.BLL.Services;
 using CoreMeld.Domain.Enums;
 using CoreMeld.Domain.Models;
@@ -9,6 +11,7 @@ namespace CoreMeld.UI.Desktop.ViewModels;
 
 public class StartViewModel : ViewModelBase
 {
+    private static readonly CultureInfo Ua = new("uk-UA");
     private readonly IConfiguratorEngine _engine;
     private readonly Action<PCBuildDto, decimal> _showResult;
 
@@ -83,6 +86,41 @@ public class StartViewModel : ViewModelBase
             new(64, "64 ГБ"),
         ];
 
+        TaskGroups =
+        [
+            new("Щоденні задачі",
+            [
+                new(UserTask.WebBrowsing, "Пошук інформації в інтернеті та робота в браузері"),
+                new(UserTask.MediaConsumption, "Перегляд відео та фільмів у високій якості"),
+                new(UserTask.FileStorage, "Зберігання великої кількості файлів"),
+                new(UserTask.VideoConferencing, "Відеоконференції та месенджери", "Zoom, Teams, Slack, Discord"),
+            ]),
+            new("Робота та навчання",
+            [
+                new(UserTask.OfficeWork, "Робота з офісними програмами", "Word, Excel, PowerPoint"),
+                new(UserTask.HeavyMultitasking, "Робота з великою кількістю вкладок та інтерактивними дошками", "Miro"),
+                new(UserTask.Programming, "Програмування"),
+                new(UserTask.EconomicsAndAnalytics, "Економіка, облік та аналітика", "BAS, 1С, Power BI"),
+                new(UserTask.EngineeringAndCad, "Інженерне проєктування та архітектура", "AutoCAD, ArchiCAD, Revit"),
+                new(UserTask.MathModeling, "Математичні розрахунки та моделювання"),
+                new(UserTask.AiAndBigData, "Аналіз великих масивів інформації та робота зі штучним інтелектом"),
+            ]),
+            new("Ігри",
+            [
+                new(UserTask.Gaming1080p, "Гра в сучасні ігри на стандартних моніторах", "Full HD"),
+                new(UserTask.Gaming1440p, "Гра з високою деталізацією картинки на великих екранах", "2K"),
+                new(UserTask.Gaming4K, "Запуск найновіших ігор на максимальних налаштуваннях", "4K"),
+            ]),
+            new("Творчість",
+            [
+                new(UserTask.UiDesign, "Створення UI дизайну", "Figma"),
+                new(UserTask.PhotoEditing, "Малювання ілюстрацій та обробка фото", "Photoshop, Illustrator"),
+                new(UserTask.VideoEditing, "Монтаж відео у високій роздільній здатності", "Premiere Pro, DaVinci Resolve"),
+                new(UserTask.ThreeDModeling, "Створення 3D-моделей та прорахунок їх фізики", "Blender, Maya"),
+                new(UserTask.AudioProduction, "Робота зі звуком та створення музики", "FL Studio, Ableton Live, Cubase"),
+            ]),
+        ];
+
         _selectedCategory = CategoryOptions[0];
         _selectedStorageType = StorageTypeOptions[0];
         _selectedStorageCapacity = StorageCapacityOptions[0];
@@ -93,6 +131,7 @@ public class StartViewModel : ViewModelBase
         BuildCommand = new AsyncRelayCommand(BuildAsync);
     }
 
+    public IReadOnlyList<TaskGroupViewModel> TaskGroups { get; }
     public IReadOnlyList<OptionItem<Category?>> CategoryOptions { get; }
     public IReadOnlyList<OptionItem<StorageType?>> StorageTypeOptions { get; }
     public IReadOnlyList<OptionItem<int?>> StorageCapacityOptions { get; }
@@ -202,14 +241,27 @@ public class StartViewModel : ViewModelBase
             return;
         }
 
+        var tasks = TaskGroups
+           .SelectMany(g => g.Cards)
+           .Where(c => c.IsSelected)
+           .Select(c => c.Task)
+           .ToList();
+
+        var category = SelectedCategory.Value ?? PickCategory(tasks);
+        if (category is null)
+        {
+            ErrorMessage = "Оберіть категорію або хоча б одну задачу";
+            return;
+        }
+
         var request = new BuildRequestDto(
             Budget: budget,
             PreferredColor: SelectedColor.Value,
             RequireWifi: RequireWifi ? true : null,
             StorageType: SelectedStorageType.Value,
             CoolingType: SelectedCooling.Value,
-            Category: SelectedCategory.Value,
-            Priorities: null,
+            Category: category,
+            Priorities: tasks.Count > 0 ? tasks : null,
             RequestedRamGb: SelectedRam.Value,
             RequestedStorageGb: SelectedStorageCapacity.Value);
 
@@ -219,19 +271,39 @@ public class StartViewModel : ViewModelBase
             var build = await Task.Run(() => _engine.GenerateBuildAsync(request));
             _showResult(build, budget);
         }
-        catch (NotImplementedException)
+        catch (InsufficientBudgetException ex)
         {
-            ErrorMessage = "Підбір збірки ще в розробці";
+            ErrorMessage =
+                $"Бюджету недостатньо. Мінімум для цього ПК: {ex.Result.MinimumBudget.ToString("N0", Ua)} грн, " +
+                $"не вистачає ще {ex.Result.Shortfall.ToString("N0", Ua)} грн";
+        }
+        catch (InvalidOperationException ex)
+        {
+            Debug.WriteLine(ex);
+            ErrorMessage = "Не вдалося підібрати збірку на такий бюджет. Спробуйте збільшити бюджет або змінити задачі";
+        }
+        catch (ArgumentException ex)
+        {
+            Debug.WriteLine(ex);
+            ErrorMessage = "Перевірте введені дані й спробуйте ще раз";
         }
         catch (Exception ex)
         {
-            // TODO(#32): коли BudgetCalculator повертатиме мінімальну суму, показати її тут
-            ErrorMessage = $"Не вдалося підібрати збірку: {ex.Message}";
+            Debug.WriteLine(ex);
+            ErrorMessage = "Щось пішло не так. Спробуйте ще раз";
         }
         finally
         {
             IsBusy = false;
         }
+    }
+
+    private static Category? PickCategory(IReadOnlyCollection<UserTask> tasks)
+    {
+        if (tasks.Count == 0)
+            return null;
+
+        return UserTaskCategoryMapper.ToCategories(tasks).Max();
     }
 
     private static bool TryParseBudget(string input, out decimal budget)

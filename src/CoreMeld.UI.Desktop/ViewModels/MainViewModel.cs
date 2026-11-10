@@ -1,20 +1,27 @@
 ﻿using CoreMeld.BLL.DTO;
 using CoreMeld.BLL.Services;
 using CoreMeld.Domain.Enums;
+using CoreMeld.Domain.Interfaces.Repositories;
 using CoreMeld.Domain.Models;
 
 namespace CoreMeld.UI.Desktop.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
-    //private const bool PreviewResultScreen = false;
-    private const bool PreviewResultScreen = true;
-
+    //private const bool PreviewResultScreen = true;
+    private const bool PreviewResultScreen = false;
     private readonly StartViewModel _startViewModel;
     private ViewModelBase _currentViewModel;
+    private readonly IConfiguratorEngine _engine;
+    private readonly IComponentRepository _components;
+    private PCBuildDto? _currentBuild;
+    private decimal _currentBudget;
 
-    public MainViewModel(IConfiguratorEngine engine)
+
+    public MainViewModel(IConfiguratorEngine engine, IComponentRepository components)
     {
+        _engine = engine;
+        _components = components;
         _startViewModel = new StartViewModel(engine, ShowResult);
         _currentViewModel = _startViewModel;
 
@@ -29,6 +36,8 @@ public class MainViewModel : ViewModelBase
     }
     private void ShowResult(PCBuildDto build, decimal budget)
     {
+        _currentBuild = build;
+        _currentBudget = budget;
         CurrentViewModel = new ResultViewModel(build, budget, ShowStart, ShowPartSelector);
     }
 
@@ -36,8 +45,17 @@ public class MainViewModel : ViewModelBase
 
     private void ShowPartSelector(ComponentCategory category)
     {
+        if (_currentBuild is null)
+            return;
+
         var resultViewModel = CurrentViewModel;
-        CurrentViewModel = new PartSelectorViewModel(() => CurrentViewModel = resultViewModel);
+        CurrentViewModel = new PartSelectorViewModel(
+            _engine,
+            _components,
+            _currentBuild,
+            category,
+            newBuild => ShowResult(newBuild, _currentBudget),
+            () => CurrentViewModel = resultViewModel);
     }
 
     private static PCBuildDto SampleBuild() => new(

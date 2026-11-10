@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             Background="White"
+             Background="#EEFAFF"
              d:DesignHeight="900" d:DesignWidth="1440">
 
     <UserControl.Resources>
@@ -15,13 +15,13 @@
             <Setter Property="Margin" Value="0,0,12,0"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
-        <Style x:Key="CategoryName" TargetType="TextBlock" BasedOn="{StaticResource SectionTitle}">
+        <Style x:Key="CategoryName" TargetType="TextBox" BasedOn="{StaticResource SelectableSection}">
             <Setter Property="DockPanel.Dock" Value="Left"/>
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="Width" Value="300"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
-        <Style x:Key="PriceText" TargetType="TextBlock" BasedOn="{StaticResource SectionTitle}">
+        <Style x:Key="PriceText" TargetType="TextBox" BasedOn="{StaticResource SelectableSection}">
             <Setter Property="DockPanel.Dock" Value="Right"/>
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="Width" Value="90"/>
@@ -52,11 +52,42 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="ComponentName" TargetType="TextBlock">
+        <Style x:Key="ComponentName" TargetType="TextBox" BasedOn="{StaticResource SelectableText}">
             <Setter Property="Foreground" Value="Black"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        </Style>
+
+        <Style x:Key="BarSegment" TargetType="Button">
+            <Setter Property="Height" Value="10"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Fill" Background="{TemplateBinding Background}"
+                                CornerRadius="{Binding CornerRadius}"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Fill" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RowCard" TargetType="Border">
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
+                    <Setter Property="Background" Value="#DDF1FA"/>
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
 
@@ -76,51 +107,62 @@
         </Border>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <StackPanel MaxWidth="1230" Margin="30,40,30,50">
+            <Border Background="White" MaxWidth="1230" Margin="30,40,30,50" Padding="40,36,40,40">
+                <StackPanel>
 
-                <TextBlock Text="Конфігурація готова!" Style="{StaticResource PageTitle}"/>
+                    <TextBox Text="Конфігурація готова!" Style="{StaticResource SelectablePageTitle}"/>
 
-                <Border Width="585" Height="10" Margin="0,16,0,6"
-        BorderBrush="{StaticResource NavyBrush}" BorderThickness="1">
-                    <ItemsControl ItemsSource="{Binding BudgetSegments}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
+                    <Border Width="583" Height="10" Margin="0,16,0,6">
+                        <ItemsControl ItemsSource="{Binding BudgetSegments}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Style="{StaticResource BarSegment}"
+                                        Width="{Binding Width}"
+                                        Background="{Binding Color}"
+                                        ToolTip="{Binding ToolTipText}"
+                                        ToolTipService.InitialShowDelay="0"
+                                        ToolTipService.ShowDuration="15000"
+                                        Command="{Binding DataContext.HighlightCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding Category}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
+
+                    <TextBox Text="{Binding BudgetCaption, Mode=OneWay}" Style="{StaticResource SelectableText}"
+                         FontSize="11" HorizontalAlignment="Center" TextAlignment="Center"/>
+
+                    <ItemsControl Margin="0,36,0,20" ItemsSource="{Binding Items}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Width="{Binding Width}" Background="{Binding Color}"/>
+                                <Border Style="{StaticResource RowCard}">
+                                    <DockPanel Height="72">
+                                        <Ellipse Fill="{Binding Color}" Style="{StaticResource CategoryDot}"/>
+                                        <TextBox Text="{Binding CategoryName, Mode=OneWay}" ToolTip="{Binding Hint}"
+                                             ToolTipService.InitialShowDelay="0" ToolTipService.ShowDuration="15000"
+                                             Style="{StaticResource CategoryName}"/>
+
+                                        <TextBox Text="{Binding PriceText, Mode=OneWay}" Style="{StaticResource PriceText}"/>
+                                        <Button Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"
+                                            Command="{Binding DataContext.ReplaceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding Category}"/>
+                                        <TextBox Text="{Binding Name, Mode=OneWay}" Style="{StaticResource ComponentName}"/>
+                                    </DockPanel>
+                                </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                </Border>
 
-                <TextBlock Text="{Binding BudgetCaption}" FontSize="11" HorizontalAlignment="Center"/>
-
-                <ItemsControl Margin="0,36,0,20" ItemsSource="{Binding Items}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <DockPanel Height="72">
-                                <Ellipse Fill="{Binding Color}" Style="{StaticResource CategoryDot}"/>
-                                <TextBlock Text="{Binding CategoryName}" ToolTip="{Binding Hint}"
-                                           ToolTipService.InitialShowDelay="0" ToolTipService.ShowDuration="15000"
-                                           Style="{StaticResource CategoryName}"/>  
-                                
-                                <TextBlock Text="{Binding PriceText}" Style="{StaticResource PriceText}"/>
-                                <Button Style="{StaticResource RefreshButton}" ToolTip="Замінити деталь"
-                        Command="{Binding DataContext.ReplaceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                        CommandParameter="{Binding Category}"/>
-                                <TextBlock Text="{Binding Name}" Style="{StaticResource ComponentName}"/>
-                            </DockPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-
-                <Button Content="Скопіювати конфігурацію" Style="{StaticResource PrimaryButton}"
+                    <Button Content="Скопіювати конфігурацію" Style="{StaticResource PrimaryButton}"
                         FontSize="16" Padding="44,12" HorizontalAlignment="Center"/>
 
-            </StackPanel>
+                </StackPanel>
+            </Border>
         </ScrollViewer>
     </Grid>
 </UserControl>
