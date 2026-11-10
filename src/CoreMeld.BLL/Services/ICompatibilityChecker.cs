@@ -7,4 +7,5 @@ public interface ICompatibilityChecker
     bool IsSocketCompatible(Cpu cpu, Motherboard motherboard);
     bool IsRamCompatible(Ram ram, Motherboard motherboard);
     bool IsPowerConnectorCompatible(Gpu? gpu, PowerSupply powerSupply);
+    bool IsCoolerCompatible(Cpu cpu, CpuCooler cooler);
 }

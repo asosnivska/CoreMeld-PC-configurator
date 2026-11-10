@@ -55,7 +55,7 @@ public class ConfiguratorEngine:IConfiguratorEngine
         _spaceControlService = spaceControlService;
         _storageRepository = storageRepository;
     }
-    
+
     public async Task<PCBuildDto> GenerateBuildAsync(BuildRequestDto request)
     {
         ArgumentNullException.ThrowIfNull(request);
@@ -80,7 +80,7 @@ public class ConfiguratorEngine:IConfiguratorEngine
         var limits = _budgetCalculator.CalculateAllocation(request.Budget, categories);
 
         var needIntegratedGpu = limits[ComponentCategory.Gpu] == 0m;
-        
+
         var cpuCandidates = await _cpuRepository.GetByFilterAsync(
             hasIntegratedGpu: needIntegratedGpu ? true : null,
             maxPrice: limits[ComponentCategory.Cpu]);
@@ -117,14 +117,14 @@ public class ConfiguratorEngine:IConfiguratorEngine
             var allmotherboard = await _motherboardRepository.GetByFilterAsync(
                 socketId: cpu.SocketId,
                 hasWifi: request.RequireWifi == true ? true : null);
-            
+
             motherboard = allmotherboard
                               .OrderBy(x => x.Price)
                               .ThenBy(x => x.Id)
                               .FirstOrDefault()
                           ?? throw new InvalidOperationException("Не вдалося підібрати материнську плату.");
         }
-        
+
         var ramCandidates = await _ramRepository.GetByFilterAsync(
             memoryType: new[] { motherboard.MemoryType },
             minCapacityGb: request.RequestedRamGb,
@@ -154,7 +154,7 @@ public class ConfiguratorEngine:IConfiguratorEngine
 
 
         Gpu? gpu = null;
-        
+
         if (limits[ComponentCategory.Gpu] > 0m)
         {
             var gpuCandidates = await _gpuRepository.GetByFilterAsync(
@@ -257,7 +257,7 @@ public class ConfiguratorEngine:IConfiguratorEngine
                          .FirstOrDefault()
                      ?? throw new InvalidOperationException("Не вдалося підібрати корпус.");
         }
-        
+
         var totalTdp = _tdpCalculator.CalculateTotalTdp(cpu, gpu);
         var requiredWattage = _tdpCalculator.GetRecommendedPsuWattage(totalTdp);
 
@@ -287,7 +287,7 @@ public class ConfiguratorEngine:IConfiguratorEngine
                               .FirstOrDefault()
                           ?? throw new InvalidOperationException("Не вдалося підібрати блок живлення.");
         }
-        
+
         var build = new PCBuild
         {
             Cpu = cpu,
@@ -300,23 +300,265 @@ public class ConfiguratorEngine:IConfiguratorEngine
             Storage = storage
         };
 
-        var totalPrice = cpu.Price + pcCase.Price + cooler.Price +
-                         (gpu is null ? 0m : gpu.Price) + motherboard.Price + powerSupply.Price + ram.Price +
-                         storage.Price;
+        var totalPrice = CalculateTotalPrice(build);
 
         if (totalPrice > request.Budget)
         {
-            var ThresholdRes = new ThresholdResult(false, totalPrice, totalPrice - request.Budget);
-            throw new InsufficientBudgetException(ThresholdRes);
+            var thresholdResult = new ThresholdResult(false, totalPrice, totalPrice - request.Budget);
+            throw new InsufficientBudgetException(thresholdResult);
         }
 
-        var isCompatible =
-            _compatibilityChecker.IsSocketCompatible(cpu, motherboard)
-            && _compatibilityChecker.IsRamCompatible(ram, motherboard)
-            && _compatibilityChecker.IsPowerConnectorCompatible(gpu, powerSupply)
-            && _spaceControlService.FitsInCase(pcCase, motherboard, gpu, cooler)
-            && powerSupply.Wattage >= requiredWattage;
-        
+        return CreateBuildDto(build);
+    }
+
+    public IReadOnlyList<Component> FilterCompatibleComponents(IEnumerable<Component> pool, PCBuild currentBuild)
+    {
+        ArgumentNullException.ThrowIfNull(pool);
+        ArgumentNullException.ThrowIfNull(currentBuild);
+
+        return pool
+            .Where(component => IsBuildCompatible(WithComponent(currentBuild, component)))
+            .ToList();
+    }
+
+    private static InvalidOperationException NotFound(ComponentDto item)
+        => new($"Деталь {item.Id} категорії {item.Category} не знайдена.");
+     private async Task<PCBuild> RestoreBuildAsync(PCBuildDto dto)
+    {
+        var build = new PCBuild();
+        var seen = new HashSet<ComponentCategory>();
+
+        foreach (var item in dto.Components)
+        {
+            if (!seen.Add(item.Category))
+            {
+                throw new ArgumentException($"У збірці кілька деталей категорії {item.Category}.", nameof(dto));
+            }
+
+            switch (item.Category)
+            {
+                case ComponentCategory.Cpu:
+                    build.Cpu = await _cpuRepository.GetByIdAsync(item.Id) ?? throw NotFound(item);
+                    break;
+                case ComponentCategory.Motherboard:
+                    build.Motherboard = await _motherboardRepository.GetByIdAsync(item.Id) ?? throw NotFound(item);
+                    break;
+                case ComponentCategory.Gpu:
+                    build.Gpu = await _gpuRepository.GetByIdAsync(item.Id) ?? throw NotFound(item);
+                    break;
+                case ComponentCategory.Ram:
+                    build.Ram = await _ramRepository.GetByIdAsync(item.Id) ?? throw NotFound(item);
+                    break;
+                case ComponentCategory.Storage:
+                    build.Storage = await _storageRepository.GetByIdAsync(item.Id) ?? throw NotFound(item);
+                    break;
+                case ComponentCategory.CpuCooler:
+                    build.CpuCooler = await _coolerRepository.GetByIdAsync(item.Id) ?? throw NotFound(item);
+                    break;
+                case ComponentCategory.Case:
+                    build.Case = await _caseRepository.GetByIdAsync(item.Id) ?? throw NotFound(item);
+                    break;
+                case ComponentCategory.PowerSupply:
+                    build.PowerSupply = await _powerSupplyRepository.GetByIdAsync(item.Id) ?? throw NotFound(item);
+                    break;
+                default:
+                    throw new ArgumentException($"Непідтримувана категорія: {item.Category}.", nameof(dto));
+            }
+        }
+
+        return build;
+    }
+
+    public async Task<IReadOnlyList<Component>> FilterCompatibleComponentsAsync(
+        IEnumerable<Component> pool, PCBuildDto currentBuild)
+    {
+        ArgumentNullException.ThrowIfNull(pool);
+        ArgumentNullException.ThrowIfNull(currentBuild);
+
+        var build = await RestoreBuildAsync(currentBuild);
+
+        return FilterCompatibleComponents(pool, build);
+    }
+
+    public async Task<PCBuildDto> ReplaceComponentAsync(
+        PCBuildDto currentBuild, ComponentCategory category, Component newComponent)
+    {
+        ArgumentNullException.ThrowIfNull(currentBuild);
+        ArgumentNullException.ThrowIfNull(newComponent);
+
+        var build = await RestoreBuildAsync(currentBuild);
+
+        return ReplaceComponent(build, category, newComponent);
+    }
+
+    public PCBuildDto ReplaceComponent(PCBuild currentBuild, ComponentCategory category, Component newComponent)
+    {
+        ArgumentNullException.ThrowIfNull(currentBuild);
+        ArgumentNullException.ThrowIfNull(newComponent);
+
+        if (GetCategory(newComponent) != category)
+        {
+            throw new ArgumentException("Тип деталі не відповідає вказаній категорії.", nameof(newComponent));
+        }
+
+        if (currentBuild.Cpu is null
+            || currentBuild.Motherboard is null
+            || currentBuild.Ram is null
+            || currentBuild.Storage is null
+            || currentBuild.CpuCooler is null
+            || currentBuild.Case is null
+            || currentBuild.PowerSupply is null)
+        {
+            throw new InvalidOperationException("Збірка неповна: замінювати деталь можна лише в повній збірці.");
+        }
+
+        return CreateBuildDto(WithComponent(currentBuild, newComponent));
+    }
+
+    private static ComponentCategory GetCategory(Component component) => component switch
+    {
+        Cpu => ComponentCategory.Cpu,
+        Motherboard => ComponentCategory.Motherboard,
+        Gpu => ComponentCategory.Gpu,
+        Ram => ComponentCategory.Ram,
+        Storage => ComponentCategory.Storage,
+        CpuCooler => ComponentCategory.CpuCooler,
+        PCCase => ComponentCategory.Case,
+        PowerSupply => ComponentCategory.PowerSupply,
+        _ => throw new ArgumentException(
+            $"Непідтримуваний тип компонента: {component.GetType().Name}.", nameof(component))
+    };
+
+    private static PCBuild WithComponent(PCBuild build, Component component)
+    {
+        var copy = new PCBuild
+        {
+            Cpu = build.Cpu,
+            Motherboard = build.Motherboard,
+            Gpu = build.Gpu,
+            Ram = build.Ram,
+            Storage = build.Storage,
+            CpuCooler = build.CpuCooler,
+            Case = build.Case,
+            PowerSupply = build.PowerSupply
+        };
+
+        switch (component)
+        {
+            case Cpu cpu: copy.Cpu = cpu; break;
+            case Motherboard motherboard: copy.Motherboard = motherboard; break;
+            case Gpu gpu: copy.Gpu = gpu; break;
+            case Ram ram: copy.Ram = ram; break;
+            case Storage storage: copy.Storage = storage; break;
+            case CpuCooler cooler: copy.CpuCooler = cooler; break;
+            case PCCase pcCase: copy.Case = pcCase; break;
+            case PowerSupply powerSupply: copy.PowerSupply = powerSupply; break;
+            default:
+                throw new ArgumentException(
+                    $"Непідтримуваний тип компонента: {component.GetType().Name}.", nameof(component));
+        }
+
+        return copy;
+    }
+
+    private bool IsBuildCompatible(PCBuild build)
+    {
+        var cpu = build.Cpu;
+        var motherboard = build.Motherboard;
+        var gpu = build.Gpu;
+        var ram = build.Ram;
+        var cooler = build.CpuCooler;
+        var pcCase = build.Case;
+        var powerSupply = build.PowerSupply;
+
+        if (cpu is not null && motherboard is not null
+                            && !_compatibilityChecker.IsSocketCompatible(cpu, motherboard))
+        {
+            return false;
+        }
+
+        if (ram is not null && motherboard is not null
+                            && !_compatibilityChecker.IsRamCompatible(ram, motherboard))
+        {
+            return false;
+        }
+
+        if (cpu is not null && cooler is not null
+                            && !_compatibilityChecker.IsCoolerCompatible(cpu, cooler))
+        {
+            return false;
+        }
+
+        if (pcCase is not null)
+        {
+            if (pcCase.MaxBoardFormFactorId is null)
+            {
+                return false;
+            }
+
+            if (motherboard is not null && !_spaceControlService.FitsBoard(pcCase, motherboard))
+            {
+                return false;
+            }
+
+            if (gpu is not null && !_spaceControlService.FitsGpu(pcCase, gpu))
+            {
+                return false;
+            }
+
+            if (cooler is not null && !_spaceControlService.FitsCooler(pcCase, cooler))
+            {
+                return false;
+            }
+        }
+
+        if (powerSupply is not null)
+        {
+            if (gpu is not null)
+            {
+                if (gpu.PowerConnectorType is null || gpu.PowerConnectorCount is null
+                    || powerSupply.Pcie8PinCount is null || powerSupply.Has12Vhpwr is null)
+                {
+                    return false;
+                }
+
+                if (!_compatibilityChecker.IsPowerConnectorCompatible(gpu, powerSupply))
+                {
+                    return false;
+                }
+            }
+
+            if (cpu is not null)
+            {
+                var totalTdp = _tdpCalculator.CalculateTotalTdp(cpu, gpu);
+                var requiredWattage = _tdpCalculator.GetRecommendedPsuWattage(totalTdp);
+
+                if (powerSupply.Wattage < requiredWattage)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private static decimal CalculateTotalPrice(PCBuild build) =>
+        build.Cpu.Price
+        + build.Motherboard.Price
+        + build.Ram.Price
+        + build.Storage.Price
+        + build.CpuCooler.Price
+        + build.Case.Price
+        + build.PowerSupply.Price
+        + (build.Gpu?.Price ?? 0m);
+
+    private PCBuildDto CreateBuildDto(PCBuild build)
+    {
+        var totalTdp = _tdpCalculator.CalculateTotalTdp(build.Cpu, build.Gpu);
+        var totalPrice = CalculateTotalPrice(build);
+        var isCompatible = IsBuildCompatible(build);
+
         var components = new List<Component>
         {
             build.Cpu,
@@ -327,7 +569,7 @@ public class ConfiguratorEngine:IConfiguratorEngine
             build.Case,
             build.PowerSupply
         };
-        
+
         if (build.Gpu is not null)
         {
             components.Insert(2, build.Gpu);
@@ -336,10 +578,5 @@ public class ConfiguratorEngine:IConfiguratorEngine
         var componentDtos = components.Select(ComponentDtoMapper.ToDto).ToList();
 
         return new PCBuildDto(totalPrice, totalTdp, isCompatible, componentDtos);
-    }
-
-    public PCBuildDto ReplaceComponent(PCBuild currentBuild, ComponentCategory category, Component newComponent)
-    {
-        throw new NotImplementedException();
     }
 }

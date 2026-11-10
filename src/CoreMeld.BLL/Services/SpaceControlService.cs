@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using CoreMeld.BLL.Settings;
+﻿using CoreMeld.BLL.Settings;
 using CoreMeld.Domain.Models;
 
 namespace CoreMeld.BLL.Services;
@@ -18,6 +17,20 @@ public class SpaceControlService: ISpaceControlService
         ArgumentNullException.ThrowIfNull(pcCase);
         ArgumentNullException.ThrowIfNull(motherboard);
         ArgumentNullException.ThrowIfNull(cooler);
+        
+
+        var fitsBoard = FitsBoard(pcCase, motherboard);
+        var fitsGpu = gpu is null ? true : FitsGpu(pcCase, gpu);
+        var fitsCooler = FitsCooler(pcCase, cooler);
+
+        return fitsBoard && fitsGpu && fitsCooler;
+    }
+
+    public bool FitsBoard(PCCase pcCase, Motherboard motherboard)
+    {
+        
+        ArgumentNullException.ThrowIfNull(pcCase);
+        ArgumentNullException.ThrowIfNull(motherboard);
 
         if (pcCase.MaxBoardFormFactorId is null)
         {
@@ -32,12 +45,28 @@ public class SpaceControlService: ISpaceControlService
             return false;
         }
 
-        if (gpu is not null && gpu.LengthMm > pcCase.MaxGpuLengthMm)
+        return true;
+    }
+
+    public bool FitsGpu(PCCase pcCase, Gpu gpu)
+    {
+        ArgumentNullException.ThrowIfNull(pcCase);
+        ArgumentNullException.ThrowIfNull(gpu);
+        
+        if (gpu.LengthMm > pcCase.MaxGpuLengthMm)
         {
             return false;
         }
 
-        if (cooler.HeightMm > pcCase.MaxCpuCoolerHeightMm)
+        return true;
+    }
+
+    public bool FitsCooler(PCCase pcCase, CpuCooler cpuCooler)
+    {
+        
+        ArgumentNullException.ThrowIfNull(pcCase);
+        ArgumentNullException.ThrowIfNull(cpuCooler);
+        if (cpuCooler.HeightMm > pcCase.MaxCpuCoolerHeightMm)
         {
             return false;
         }
