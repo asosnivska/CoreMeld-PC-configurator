@@ -94,7 +94,7 @@
                     </StackPanel>
                 </StackPanel>
 
-                <TextBlock Text="Материнська плата" Style="{StaticResource PageTitle}"
+                <TextBlock Text="{Binding Title}" Style="{StaticResource PageTitle}"
                            Foreground="White" FontSize="24" VerticalAlignment="Center"/>
 
                 <TextBox Text="Пошук" Width="180" Height="33" HorizontalAlignment="Right"
@@ -152,102 +152,52 @@
 
             <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="25,10,40,40">
-                    <Expander Style="{StaticResource ItemExpander}" IsExpanded="True">
-                        <Expander.Header>
-                            <DockPanel>
-                                <Button Content="Обрати" Style="{StaticResource SelectButton}"/>
-                                <TextBlock Text="6 549 грн" Style="{StaticResource PriceText}"/>
-                                <ToggleButton Style="{StaticResource ChevronToggle}"
-                                          IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Expander}}"/>
-                                <TextBlock Text="Материнська плата Asus TUF Gaming B550M-Plus WI-FI II s-AM4 B550" Style="{StaticResource ItemName}"/>
-                            </DockPanel>
-                        </Expander.Header>
-                        <Grid Margin="10,0,0,10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Border Grid.Row="0" Grid.ColumnSpan="2" Background="{StaticResource StripeBrush}"/>
-                            <Border Grid.Row="2" Grid.ColumnSpan="2" Background="{StaticResource StripeBrush}"/>
-                            <Border Grid.Row="4" Grid.ColumnSpan="2" Background="{StaticResource StripeBrush}"/>
-                            <Border Grid.Row="6" Grid.ColumnSpan="2" Background="{StaticResource StripeBrush}"/>
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Сокет" Style="{StaticResource CharText}"/>
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="s-AM4" Style="{StaticResource CharText}"/>
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Чіпсет" Style="{StaticResource CharText}"/>
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="AMD B550" Style="{StaticResource CharText}"/>
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Форм-фактор" Style="{StaticResource CharText}"/>
-                            <TextBlock Grid.Row="2" Grid.Column="1" Text="micro-ATX" Style="{StaticResource CharText}"/>
-                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Вбудований CPU" Style="{StaticResource CharText}"/>
-                            <TextBlock Grid.Row="3" Grid.Column="1" Text="немає" Style="{StaticResource CharText}"/>
-                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Макс. TDP процесорів" Style="{StaticResource CharText}"/>
-                            <TextBlock Grid.Row="4" Grid.Column="1" Text="105 Вт" Style="{StaticResource CharText}"/>
-                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Тип пам'яті" Style="{StaticResource CharText}"/>
-                            <TextBlock Grid.Row="5" Grid.Column="1" Text="DDR4" Style="{StaticResource CharText}"/>
-                            <TextBlock Grid.Row="6" Grid.Column="0" Text="Кількість слотів пам'яті" Style="{StaticResource CharText}"/>
-                            <TextBlock Grid.Row="6" Grid.Column="1" Text="4 шт." Style="{StaticResource CharText}"/>
-                            <TextBlock Grid.Row="7" Grid.Column="0" Text="Макс. об'єм оперативної пам'яті" Style="{StaticResource CharText}"/>
-                            <TextBlock Grid.Row="7" Grid.Column="1" Text="128 ГБ" Style="{StaticResource CharText}"/>
-                        </Grid>
-                    </Expander>
+                    <TextBlock Text="Завантаження…" Foreground="{StaticResource TextBrush}" Margin="10,18"
+                               Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"/>
 
-                    <Expander Style="{StaticResource ItemExpander}">
-                        <Expander.Header>
-                            <DockPanel>
-                                <Button Content="Обрати" Style="{StaticResource SelectButton}"/>
-                                <TextBlock Text="3 228 грн" Style="{StaticResource PriceText}"/>
-                                <ToggleButton Style="{StaticResource ChevronToggle}"
-                                          IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Expander}}"/>
-                                <TextBlock Text="Материнська плата Asus TUF Gaming A520M-Plus II s-AM4 A520" Style="{StaticResource ItemName}"/>
-                            </DockPanel>
-                        </Expander.Header>
-                    </Expander>
+                    <TextBox Text="{Binding ErrorMessage, Mode=OneWay}" IsReadOnly="True"
+                             Background="Transparent" BorderThickness="0"
+                             Foreground="#C0392B" TextWrapping="Wrap" Margin="10,18"
+                             Visibility="{Binding HasError, Converter={StaticResource BoolToVisibility}}"/>
 
-                    <Expander Style="{StaticResource ItemExpander}">
-                        <Expander.Header>
-                            <DockPanel>
-                                <Button Content="Обрати" Style="{StaticResource SelectButton}"/>
-                                <TextBlock Text="6 549 грн" Style="{StaticResource PriceText}"/>
-                                <ToggleButton Style="{StaticResource ChevronToggle}"
-                                          IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Expander}}"/>
-                                <TextBlock Text="Материнська плата Asus TUF Gaming B550M-Plus WI-FI II s-AM4 B550" Style="{StaticResource ItemName}"/>
-                            </DockPanel>
-                        </Expander.Header>
-                    </Expander>
-
-                    <Expander Style="{StaticResource ItemExpander}">
-                        <Expander.Header>
-                            <DockPanel>
-                                <Button Content="Обрати" Style="{StaticResource SelectButton}"/>
-                                <TextBlock Text="5 499 грн" Style="{StaticResource PriceText}"/>
-                                <ToggleButton Style="{StaticResource ChevronToggle}"
-                                          IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Expander}}"/>
-                                <TextBlock Text="Материнська плата Asus TUF Gaming B550M-Plus s-AM4 B550" Style="{StaticResource ItemName}"/>
-                            </DockPanel>
-                        </Expander.Header>
-                    </Expander>
-
-                    <Expander Style="{StaticResource ItemExpander}">
-                        <Expander.Header>
-                            <DockPanel>
-                                <Button Content="Обрати" Style="{StaticResource SelectButton}"/>
-                                <TextBlock Text="4 499 грн" Style="{StaticResource PriceText}"/>
-                                <ToggleButton Style="{StaticResource ChevronToggle}"
-                                          IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Expander}}"/>
-                                <TextBlock Text="Материнська плата MSI B550M PRO-VDH s-AM4 B550" Style="{StaticResource ItemName}"/>
-                            </DockPanel>
-                        </Expander.Header>
-                    </Expander>
-
+                    <ItemsControl ItemsSource="{Binding Items}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Expander Style="{StaticResource ItemExpander}" IsExpanded="False">
+                                    <Expander.Header>
+                                        <DockPanel>
+                                            <Button Content="{Binding ActionText}" Style="{StaticResource SelectButton}"
+                                                    Command="{Binding DataContext.SelectCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}"/>
+                                            <TextBlock Text="{Binding PriceText}" Style="{StaticResource PriceText}"/>
+                                            <ToggleButton Style="{StaticResource ChevronToggle}"
+                                                          IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Expander}}"/>
+                                            <TextBlock Text="{Binding Name}" Style="{StaticResource ItemName}"/>
+                                        </DockPanel>
+                                    </Expander.Header>
+                                    <ItemsControl ItemsSource="{Binding Characteristics}" AlternationCount="2" Margin="10,0,0,10">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid x:Name="Row">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="200"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="0" Text="{Binding Name}" Style="{StaticResource CharText}"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Value}" Style="{StaticResource CharText}"/>
+                                                </Grid>
+                                                <DataTemplate.Triggers>
+                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ItemsControl.AlternationIndex)}" Value="0">
+                                                        <Setter TargetName="Row" Property="Background" Value="{StaticResource StripeBrush}"/>
+                                                    </DataTrigger>
+                                                </DataTemplate.Triggers>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Expander>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
             </ScrollViewer>
         </Grid>
