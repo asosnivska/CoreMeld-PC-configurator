@@ -22,6 +22,9 @@ public class CompatibilityCheckerTests
     private static PowerSupply CreatePowerSupply(int? pcie8Pin = 2, bool? has12Vhpwr = false)
         =>new PowerSupply() { Pcie8PinCount = pcie8Pin, Has12Vhpwr = has12Vhpwr };
     
+    private static CpuCooler CreateCooler(int socketId = 1, int tdpRating = 150)
+        => new CpuCooler() { SocketId = socketId, TdpRatingWatts = tdpRating };
+    
  [Fact]
     public void IsSocketCompatible_SameSocket_ReturnsTrue()
     {
@@ -289,6 +292,71 @@ public class CompatibilityCheckerTests
 
         Assert.Throws<ArgumentNullException>(
             () => checker.IsPowerConnectorCompatible(CreateGpu(), null!));
+    }
+    
+    [Fact]
+    public void IsCoolerCompatible_SameSocketAndEnoughTdp_ReturnsTrue()
+    {
+        var checker = CreateChecker();
+
+        var result = checker.IsCoolerCompatible(
+            new Cpu { SocketId = 1, TdpWatts = 65 },
+            CreateCooler(socketId: 1, tdpRating: 150));
+
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsCoolerCompatible_TdpRatingEqualsCpuTdp_ReturnsTrue()
+    {
+        var checker = CreateChecker();
+
+        var result = checker.IsCoolerCompatible(
+            new Cpu { SocketId = 1, TdpWatts = 150 },
+            CreateCooler(tdpRating: 150));
+
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsCoolerCompatible_TdpRatingBelowCpuTdp_ReturnsFalse()
+    {
+        var checker = CreateChecker();
+
+        var result = checker.IsCoolerCompatible(
+            new Cpu { SocketId = 1, TdpWatts = 151 },
+            CreateCooler(tdpRating: 150));
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsCoolerCompatible_DifferentSocket_ReturnsFalse()
+    {
+        var checker = CreateChecker();
+
+        var result = checker.IsCoolerCompatible(
+            new Cpu { SocketId = 1, TdpWatts = 65 },
+            CreateCooler(socketId: 2));
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsCoolerCompatible_NullCpu_Throws()
+    {
+        var checker = CreateChecker();
+
+        Assert.Throws<ArgumentNullException>(() => checker.IsCoolerCompatible(null!, CreateCooler()));
+    }
+
+    [Fact]
+    public void IsCoolerCompatible_NullCooler_Throws()
+    {
+        var checker = CreateChecker();
+
+        Assert.Throws<ArgumentNullException>(
+            () => checker.IsCoolerCompatible(new Cpu { SocketId = 1, TdpWatts = 65 }, null!));
     }
 
 }
