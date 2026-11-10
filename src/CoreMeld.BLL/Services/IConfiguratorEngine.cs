@@ -13,4 +13,6 @@ public interface IConfiguratorEngine
         Component newComponent);
     
     IReadOnlyList<Component> FilterCompatibleComponents(IEnumerable<Component> pool, PCBuild currentBuild);
+    Task<IReadOnlyList<Component>> FilterCompatibleComponentsAsync(IEnumerable<Component> pool, PCBuildDto currentBuild);
+    Task<PCBuildDto> ReplaceComponentAsync(PCBuildDto currentBuild, ComponentCategory category, Component newComponent);
 }

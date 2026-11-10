@@ -321,6 +321,76 @@ public class ConfiguratorEngine:IConfiguratorEngine
             .ToList();
     }
 
+    private static InvalidOperationException NotFound(ComponentDto item)
+        => new($"Деталь {item.Id} категорії {item.Category} не знайдена.");
+     private async Task<PCBuild> RestoreBuildAsync(PCBuildDto dto)
+    {
+        var build = new PCBuild();
+        var seen = new HashSet<ComponentCategory>();
+
+        foreach (var item in dto.Components)
+        {
+            if (!seen.Add(item.Category))
+            {
+                throw new ArgumentException($"У збірці кілька деталей категорії {item.Category}.", nameof(dto));
+            }
+
+            switch (item.Category)
+            {
+                case ComponentCategory.Cpu:
+                    build.Cpu = await _cpuRepository.GetByIdAsync(item.Id) ?? throw NotFound(item);
+                    break;
+                case ComponentCategory.Motherboard:
+                    build.Motherboard = await _motherboardRepository.GetByIdAsync(item.Id) ?? throw NotFound(item);
+                    break;
+                case ComponentCategory.Gpu:
+                    build.Gpu = await _gpuRepository.GetByIdAsync(item.Id) ?? throw NotFound(item);
+                    break;
+                case ComponentCategory.Ram:
+                    build.Ram = await _ramRepository.GetByIdAsync(item.Id) ?? throw NotFound(item);
+                    break;
+                case ComponentCategory.Storage:
+                    build.Storage = await _storageRepository.GetByIdAsync(item.Id) ?? throw NotFound(item);
+                    break;
+                case ComponentCategory.CpuCooler:
+                    build.CpuCooler = await _coolerRepository.GetByIdAsync(item.Id) ?? throw NotFound(item);
+                    break;
+                case ComponentCategory.Case:
+                    build.Case = await _caseRepository.GetByIdAsync(item.Id) ?? throw NotFound(item);
+                    break;
+                case ComponentCategory.PowerSupply:
+                    build.PowerSupply = await _powerSupplyRepository.GetByIdAsync(item.Id) ?? throw NotFound(item);
+                    break;
+                default:
+                    throw new ArgumentException($"Непідтримувана категорія: {item.Category}.", nameof(dto));
+            }
+        }
+
+        return build;
+    }
+
+    public async Task<IReadOnlyList<Component>> FilterCompatibleComponentsAsync(
+        IEnumerable<Component> pool, PCBuildDto currentBuild)
+    {
+        ArgumentNullException.ThrowIfNull(pool);
+        ArgumentNullException.ThrowIfNull(currentBuild);
+
+        var build = await RestoreBuildAsync(currentBuild);
+
+        return FilterCompatibleComponents(pool, build);
+    }
+
+    public async Task<PCBuildDto> ReplaceComponentAsync(
+        PCBuildDto currentBuild, ComponentCategory category, Component newComponent)
+    {
+        ArgumentNullException.ThrowIfNull(currentBuild);
+        ArgumentNullException.ThrowIfNull(newComponent);
+
+        var build = await RestoreBuildAsync(currentBuild);
+
+        return ReplaceComponent(build, category, newComponent);
+    }
+
     public PCBuildDto ReplaceComponent(PCBuild currentBuild, ComponentCategory category, Component newComponent)
     {
         ArgumentNullException.ThrowIfNull(currentBuild);
