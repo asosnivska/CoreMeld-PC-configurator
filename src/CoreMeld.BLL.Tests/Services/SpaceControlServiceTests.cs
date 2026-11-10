@@ -160,4 +160,102 @@ public class SpaceControlServiceTests
         Assert.Throws<ArgumentNullException>(
             () => service.FitsInCase(CreateCase(), CreateBoard(), CreateGpu(), null!));
     }
+    
+        [Theory]
+    [InlineData(1, 1, true)]
+    [InlineData(2, 1, true)]
+    [InlineData(1, 2, false)]
+    [InlineData(2, 3, false)]
+    [InlineData(3, 3, true)]
+    public void FitsBoard_BoardAgainstCaseFormFactor_ReturnsExpected(int boardFormFactorId, int caseFormFactorId, bool expected)
+    {
+        var service = CreateService();
+
+        var result = service.FitsBoard(CreateCase(maxBoardFormFactorId: caseFormFactorId), CreateBoard(boardFormFactorId));
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void FitsBoard_CaseFormFactorMissing_Throws()
+    {
+        var service = CreateService();
+
+        Assert.Throws<InvalidOperationException>(
+            () => service.FitsBoard(CreateCase(maxBoardFormFactorId: null), CreateBoard()));
+    }
+
+    [Fact]
+    public void FitsBoard_NullCase_Throws()
+    {
+        var service = CreateService();
+
+        Assert.Throws<ArgumentNullException>(() => service.FitsBoard(null!, CreateBoard()));
+    }
+
+    [Fact]
+    public void FitsBoard_NullMotherboard_Throws()
+    {
+        var service = CreateService();
+
+        Assert.Throws<ArgumentNullException>(() => service.FitsBoard(CreateCase(), null!));
+    }
+
+    [Theory]
+    [InlineData(300, true)]
+    [InlineData(350, true)]
+    [InlineData(351, false)]
+    public void FitsGpu_LengthAgainstLimit_ReturnsExpected(int gpuLength, bool expected)
+    {
+        var service = CreateService();
+
+        var result = service.FitsGpu(CreateCase(maxGpu: 350), CreateGpu(gpuLength));
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void FitsGpu_NullCase_Throws()
+    {
+        var service = CreateService();
+
+        Assert.Throws<ArgumentNullException>(() => service.FitsGpu(null!, CreateGpu()));
+    }
+
+    [Fact]
+    public void FitsGpu_NullGpu_Throws()
+    {
+        var service = CreateService();
+
+        Assert.Throws<ArgumentNullException>(() => service.FitsGpu(CreateCase(), null!));
+    }
+
+    [Theory]
+    [InlineData(150, true)]
+    [InlineData(160, true)]
+    [InlineData(161, false)]
+    public void FitsCooler_HeightAgainstLimit_ReturnsExpected(int coolerHeight, bool expected)
+    {
+        var service = CreateService();
+
+        var result = service.FitsCooler(CreateCase(maxCooler: 160), CreateCooler(coolerHeight));
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void FitsCooler_NullCase_Throws()
+    {
+        var service = CreateService();
+
+        Assert.Throws<ArgumentNullException>(() => service.FitsCooler(null!, CreateCooler()));
+    }
+
+    [Fact]
+    public void FitsCooler_NullCooler_Throws()
+    {
+        var service = CreateService();
+
+        Assert.Throws<ArgumentNullException>(() => service.FitsCooler(CreateCase(), null!));
+    }
 }
