@@ -5,9 +5,10 @@ using CoreMeld.Domain.Enums;
 
 namespace CoreMeld.UI.Desktop.ViewModels;
 
-public class ResultItemViewModel
+public class ResultItemViewModel : ViewModelBase
 {
     private static readonly CultureInfo Ua = new("uk-UA");
+    private bool _isHighlighted;
 
     public ResultItemViewModel(ComponentCategory category, string name, decimal price)
     {
@@ -19,6 +20,11 @@ public class ResultItemViewModel
     public ComponentCategory Category { get; }
     public string Name { get; }
     public decimal Price { get; }
+    public bool IsHighlighted
+    {
+        get => _isHighlighted;
+        set => SetProperty(ref _isHighlighted, value);
+    }
 
     public string CategoryName => Category switch
     {

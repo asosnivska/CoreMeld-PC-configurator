@@ -139,6 +139,36 @@
                 <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
             </Style>
 
+            <Style x:Key="SelectableText" TargetType="TextBox">
+                <Setter Property="IsReadOnly" Value="True"/>
+                <Setter Property="IsTabStop" Value="False"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="TextWrapping" Value="Wrap"/>
+                <Setter Property="Cursor" Value="IBeam"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                <Decorator x:Name="PART_ContentHost"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="SelectableSection" TargetType="TextBox" BasedOn="{StaticResource SelectableText}">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
+            </Style>
+            <Style x:Key="SelectablePageTitle" TargetType="TextBox" BasedOn="{StaticResource SelectableText}">
+                <Setter Property="FontSize" Value="26"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Foreground" Value="{StaticResource NavyBrush}"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="TextAlignment" Value="Center"/>
+            </Style>
 
             <Style x:Key="DropdownField" TargetType="ComboBox">
                 <Setter Property="Width" Value="240"/>

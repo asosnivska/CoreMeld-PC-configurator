@@ -280,7 +280,7 @@ public class StartViewModel : ViewModelBase
         catch (InvalidOperationException ex)
         {
             Debug.WriteLine(ex);
-            ErrorMessage = "Не вдалося підібрати сумісні деталі. Спробуйте змінити бюджет або фільтри";
+            ErrorMessage = "Не вдалося підібрати збірку на такий бюджет. Спробуйте збільшити бюджет або змінити задачі";
         }
         catch (ArgumentException ex)
         {

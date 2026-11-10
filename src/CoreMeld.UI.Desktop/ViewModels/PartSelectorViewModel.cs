@@ -88,7 +88,8 @@ public class PartSelectorViewModel : ViewModelBase
             var currentId = _build.Components.FirstOrDefault(c => c.Category == _category)?.Id;
 
             Items = compatible
-                .OrderBy(c => c.Price)
+                .OrderByDescending(c => c.Id == currentId)
+                .ThenBy(c => c.Price)
                 .Select(c => new PartItemViewModel(c, ComponentDtoMapper.ToDto(c), c.Id == currentId))
                 .ToList();
 

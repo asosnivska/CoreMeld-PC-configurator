@@ -8,8 +8,8 @@ namespace CoreMeld.UI.Desktop.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
-    private const bool PreviewResultScreen = true;
-    //private const bool PreviewResultScreen = false;
+    //private const bool PreviewResultScreen = true;
+    private const bool PreviewResultScreen = false;
     private readonly StartViewModel _startViewModel;
     private ViewModelBase _currentViewModel;
     private readonly IConfiguratorEngine _engine;

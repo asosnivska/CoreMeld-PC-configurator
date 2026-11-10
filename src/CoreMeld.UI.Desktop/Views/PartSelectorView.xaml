@@ -8,45 +8,143 @@
              d:DesignHeight="900" d:DesignWidth="1440">
 
     <UserControl.Resources>
-        <Style x:Key="FilterTitle" TargetType="TextBlock">
-            <Setter Property="FontWeight" Value="Bold"/>
+
+        <Style x:Key="FilterTitle" TargetType="TextBox" BasedOn="{StaticResource SelectableText}">
+            <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
             <Setter Property="Margin" Value="0,14,0,4"/>
         </Style>
-        <Style x:Key="CharText" TargetType="TextBlock">
+
+        <Style x:Key="CharText" TargetType="TextBox" BasedOn="{StaticResource SelectableText}">
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="Padding" Value="0,3"/>
-            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Foreground" Value="Black"/>
         </Style>
-        <Style x:Key="ItemName" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="15"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-        </Style>
-        <Style x:Key="PriceText" TargetType="TextBlock" BasedOn="{StaticResource SectionTitle}">
-            <Setter Property="DockPanel.Dock" Value="Right"/>
+
+        <Style x:Key="ItemName" TargetType="TextBox" BasedOn="{StaticResource SelectableText}">
             <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Width" Value="90"/>
-            <Setter Property="TextAlignment" Value="Right"/>
+            <Setter Property="Foreground" Value="Black"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="0,10"/>
         </Style>
-        <Style x:Key="SelectButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
-            <Setter Property="DockPanel.Dock" Value="Right"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="Padding" Value="16,5"/>
-            <Setter Property="Margin" Value="30,0,0,0"/>
+
+        <Style x:Key="PriceText" TargetType="TextBox" BasedOn="{StaticResource SelectableText}">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
 
-        <Style x:Key="ChevronToggle" TargetType="ToggleButton">
-            <Setter Property="DockPanel.Dock" Value="Right"/>
-            <Setter Property="Margin" Value="20,0,40,0"/>
+        <Style x:Key="InBuildText" TargetType="TextBox" BasedOn="{StaticResource SelectableText}">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Foreground" Value="#AEAEAE"/>
+            <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="SelectButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Width" Value="72"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="ApplyButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Width" Value="93"/>
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+
+        <Style x:Key="FilterBox" TargetType="TextBox">
+            <Setter Property="Height" Value="23"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D9D9D9"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="5"/>
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="8,0"
+                                          VerticalAlignment="Center" Focusable="False"/>
+                            <TextBlock x:Name="Hint" Text="{TemplateBinding Tag}" Foreground="#AEAEAE"
+                                       Margin="8,0" VerticalAlignment="Center" IsHitTestVisible="False"
+                                       Visibility="Collapsed"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Text" Value=""/>
+                                    <Condition Property="IsKeyboardFocused" Value="False"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Hint" Property="Visibility" Value="Visible"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SortCombo" TargetType="ComboBox">
+            <Setter Property="Width" Value="122"/>
+            <Setter Property="Height" Value="27"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="8,0"/>
+            <Setter Property="BorderBrush" Value="#D9D9D9"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="SelectedIndex" Value="0"/>
+        </Style>
+
+        <Style x:Key="FilterCheck" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="0,5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal" Background="Transparent">
+                            <Border Width="17" Height="17" CornerRadius="5" Background="White"
+                                    BorderBrush="#AEAEAE" BorderThickness="0.5" VerticalAlignment="Center">
+                                <Path x:Name="Mark" Data="M 3 8 L 7 12 L 13 4" Stroke="{StaticResource AccentBrush}"
+                                      StrokeThickness="2" Margin="0" Visibility="Collapsed"/>
+                            </Border>
+                            <ContentPresenter Margin="10,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Mark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ChevronToggle" TargetType="ToggleButton">
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ToggleButton">
-                        <Path x:Name="Arrow" Data="M 0 0 L 6 6 L 12 0" Stroke="Black" StrokeThickness="2"
-                              Margin="8" Fill="Transparent"/>
+                        <Grid Background="Transparent">
+                            <Path x:Name="Arrow" Data="M 0 0 L 6 6 L 12 0" Stroke="Black" StrokeThickness="2"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center" Fill="Transparent"/>
+                        </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter TargetName="Arrow" Property="Data" Value="M 0 6 L 6 0 L 12 6"/>
@@ -58,13 +156,12 @@
         </Style>
 
         <Style x:Key="ItemExpander" TargetType="Expander">
-            <Setter Property="Margin" Value="0,0,0,12"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Expander">
                         <StackPanel>
-                            <ContentPresenter ContentSource="Header" Margin="10,18"/>
+                            <ContentPresenter ContentSource="Header"/>
                             <ContentPresenter x:Name="Body"/>
                         </StackPanel>
                         <ControlTemplate.Triggers>
@@ -94,12 +191,12 @@
                     </StackPanel>
                 </StackPanel>
 
-                <TextBlock Text="{Binding Title}" Style="{StaticResource PageTitle}"
-                           Foreground="White" FontSize="24" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding Title, Mode=OneWay}" Style="{StaticResource SelectablePageTitle}"
+                         Foreground="White" FontSize="24" VerticalAlignment="Center"/>
 
-                <TextBox Text="Пошук" Width="180" Height="33" HorizontalAlignment="Right"
-                         VerticalAlignment="Center" VerticalContentAlignment="Center"
-                         Padding="8,0" Margin="0,0,40,0" Foreground="Gray" BorderThickness="0"/>
+                <TextBox Style="{StaticResource FilterBox}" Tag="Пошук" Width="181" Height="33" FontSize="14"
+                         HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,40,0"
+                         BorderThickness="0"/>
             </Grid>
         </Border>
 
@@ -109,95 +206,116 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0" BorderBrush="{StaticResource DividerBrush}" BorderThickness="0,0,1,0">
+            <Border Grid.Column="0" Background="White" BorderBrush="{StaticResource DividerBrush}" BorderThickness="0,0,1,0">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="10,0,24,24">
 
-                        <TextBlock Text="Ціна:" Style="{StaticResource FilterTitle}"/>
-                        <StackPanel Orientation="Horizontal" Margin="38,0,0,0">
-                            <TextBox Width="90" Height="22" Text="від" Foreground="Gray" VerticalContentAlignment="Center"/>
-                            <TextBox Width="90" Height="22" Text="до" Foreground="Gray" VerticalContentAlignment="Center" Margin="12,0,8,0"/>
-                            <TextBlock Text="UAH" VerticalAlignment="Center" Foreground="Gray"/>
+                        <TextBox Text="Ціна:" Style="{StaticResource FilterTitle}"/>
+                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                            <TextBox Style="{StaticResource FilterBox}" Tag="від" Width="76"/>
+                            <TextBox Style="{StaticResource FilterBox}" Tag="до" Width="78" Margin="10,0"/>
+                            <TextBox Text="UAH" Style="{StaticResource SelectableText}" FontSize="12"
+                                     FontWeight="Medium" Foreground="#AEAEAE" VerticalAlignment="Center"/>
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
-                            <TextBlock Text="Сортування:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                            <ComboBox Width="130" SelectedIndex="0">
+                            <TextBox Text="Сортування:" Style="{StaticResource SelectableText}" FontSize="12"
+                                     FontWeight="Medium" Foreground="{StaticResource TextBrush}"
+                                     VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <ComboBox Style="{StaticResource SortCombo}">
                                 <ComboBoxItem Content="від дешевих"/>
                                 <ComboBoxItem Content="від дорожчих"/>
                             </ComboBox>
                         </StackPanel>
 
-                        <Button Content="Застосувати" Style="{StaticResource PrimaryButton}"
-                                Padding="28,6" FontSize="12" HorizontalAlignment="Center" Margin="0,20,0,4"/>
+                        <Button Content="Застосувати" Style="{StaticResource ApplyButton}"
+                                HorizontalAlignment="Center" Margin="0,16,0,4"/>
 
-                        <TextBlock Text="Виробники:" Style="{StaticResource FilterTitle}"/>
-                        <CheckBox Content="ASRock (4)" Margin="0,5,0,5"/>
-                        <CheckBox Content="Asus (14)" Margin="0,5,0,5"/>
-                        <CheckBox Content="GigaByte (9)" Margin="0,5,0,5"/>
+                        <TextBox Text="Виробники:" Style="{StaticResource FilterTitle}"/>
+                        <CheckBox Content="ASRock (4)" Style="{StaticResource FilterCheck}"/>
+                        <CheckBox Content="Asus (14)" Style="{StaticResource FilterCheck}"/>
+                        <CheckBox Content="GigaByte (9)" Style="{StaticResource FilterCheck}"/>
 
-                        <TextBlock Text="Сокет:" Style="{StaticResource FilterTitle}"/>
-                        <CheckBox Content="s-1700 (27)" Margin="0,5,0,5"/>
-                        <CheckBox Content="вбудований CPU (2)" Margin="0,5,0,5"/>
-                        <CheckBox Content="s-AM4 (31)" Margin="0,5,0,5"/>
+                        <TextBox Text="Сокет:" Style="{StaticResource FilterTitle}"/>
+                        <CheckBox Content="s-1700 (27)" Style="{StaticResource FilterCheck}" Foreground="#AEAEAE"/>
+                        <CheckBox Content="вбудований CPU (2)" Style="{StaticResource FilterCheck}" Foreground="#AEAEAE"/>
+                        <CheckBox Content="s-AM4 (31)" Style="{StaticResource FilterCheck}"/>
 
-                        <TextBlock Text="Чіпсет:" Style="{StaticResource FilterTitle}"/>
-                        <CheckBox Content="Intel Z890" Margin="0,5,0,5"/>
-                        <CheckBox Content="Intel Z790" Margin="0,5,0,5"/>
-                        <CheckBox Content="Intel W680" Margin="0,5,0,5"/>
+                        <TextBox Text="Чіпсет:" Style="{StaticResource FilterTitle}"/>
+                        <CheckBox Content="Intel Z890" Style="{StaticResource FilterCheck}"/>
+                        <CheckBox Content="Intel Z790" Style="{StaticResource FilterCheck}"/>
+                        <CheckBox Content="Intel W680" Style="{StaticResource FilterCheck}"/>
 
                     </StackPanel>
                 </ScrollViewer>
             </Border>
 
-            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="25,10,40,40">
-                    <TextBlock Text="Завантаження…" Foreground="{StaticResource TextBrush}" Margin="10,18"
-                               Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"/>
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" Background="#EEFAFF">
+                <StackPanel Margin="10,10,30,30">
 
-                    <TextBox Text="{Binding ErrorMessage, Mode=OneWay}" IsReadOnly="True"
-                             Background="Transparent" BorderThickness="0"
-                             Foreground="#C0392B" TextWrapping="Wrap" Margin="10,18"
+                    <TextBox Text="Завантаження…" Style="{StaticResource SelectableText}"
+                             Foreground="{StaticResource TextBrush}" Margin="10,18"
+                             Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"/>
+
+                    <TextBox Text="{Binding ErrorMessage, Mode=OneWay}" Style="{StaticResource SelectableText}"
+                             Foreground="#C0392B" Margin="10,18"
                              Visibility="{Binding HasError, Converter={StaticResource BoolToVisibility}}"/>
 
                     <ItemsControl ItemsSource="{Binding Items}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Expander Style="{StaticResource ItemExpander}" IsExpanded="False">
-                                    <Expander.Header>
-                                        <DockPanel>
-                                            <Button Content="{Binding ActionText}" Style="{StaticResource SelectButton}"
-                                                    Command="{Binding DataContext.SelectCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                    CommandParameter="{Binding}"/>
-                                            <TextBlock Text="{Binding PriceText}" Style="{StaticResource PriceText}"/>
-                                            <ToggleButton Style="{StaticResource ChevronToggle}"
-                                                          IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Expander}}"/>
-                                            <TextBlock Text="{Binding Name}" Style="{StaticResource ItemName}"/>
-                                        </DockPanel>
-                                    </Expander.Header>
-                                    <ItemsControl ItemsSource="{Binding Characteristics}" AlternationCount="2" Margin="10,0,0,10">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Grid x:Name="Row">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="200"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock Grid.Column="0" Text="{Binding Name}" Style="{StaticResource CharText}"/>
-                                                    <TextBlock Grid.Column="1" Text="{Binding Value}" Style="{StaticResource CharText}"/>
-                                                </Grid>
-                                                <DataTemplate.Triggers>
-                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ItemsControl.AlternationIndex)}" Value="0">
-                                                        <Setter TargetName="Row" Property="Background" Value="{StaticResource StripeBrush}"/>
-                                                    </DataTrigger>
-                                                </DataTemplate.Triggers>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </Expander>
+                                <Border Background="White" CornerRadius="20" Margin="0,0,0,10">
+                                    <Expander Style="{StaticResource ItemExpander}" IsExpanded="False">
+                                        <Expander.Header>
+                                            <Grid MinHeight="62" Margin="20,0,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="130"/>
+                                                    <ColumnDefinition Width="110"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBox Grid.Column="0" Text="{Binding Name, Mode=OneWay}" Style="{StaticResource ItemName}"/>
+
+                                                <ToggleButton Grid.Column="1" Style="{StaticResource ChevronToggle}"
+                                                              IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Expander}}"/>
+
+                                                <TextBox Grid.Column="2" Text="{Binding PriceText, Mode=OneWay}" Style="{StaticResource PriceText}"/>
+
+                                                <Button Grid.Column="3" Content="Обрати" Style="{StaticResource SelectButton}"
+                                                        Visibility="{Binding CanSelect, Converter={StaticResource BoolToVisibility}}"
+                                                        Command="{Binding DataContext.SelectCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}"/>
+                                                <TextBox Grid.Column="3" Text="У збірці" Style="{StaticResource InBuildText}"
+                                                         Visibility="{Binding IsCurrent, Converter={StaticResource BoolToVisibility}}"/>
+                                            </Grid>
+                                        </Expander.Header>
+
+                                        <ItemsControl ItemsSource="{Binding Rows}" Margin="20,0,20,16">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid x:Name="Row">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="198"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBox Grid.Column="0" Text="{Binding Name, Mode=OneWay}" Style="{StaticResource CharText}"/>
+                                                        <TextBox Grid.Column="1" Text="{Binding Value, Mode=OneWay}" Style="{StaticResource CharText}"/>
+                                                    </Grid>
+                                                    <DataTemplate.Triggers>
+                                                        <DataTrigger Binding="{Binding IsStriped}" Value="True">
+                                                            <Setter TargetName="Row" Property="Background" Value="#F2F2F2"/>
+                                                        </DataTrigger>
+                                                    </DataTemplate.Triggers>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Expander>
+                                </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
+
                 </StackPanel>
             </ScrollViewer>
         </Grid>
