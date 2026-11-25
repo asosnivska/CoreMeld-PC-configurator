@@ -136,11 +136,11 @@ public class ConfiguratorEngineGenerateBuildTests
         var engine = CreateEngine();
 
         var exception = await Assert.ThrowsAsync<InsufficientBudgetException>(
-            () => engine.GenerateBuildAsync(Request(22000m)));
+            () => engine.GenerateBuildAsync(Request(18000m)));
 
         Assert.False(exception.Result.IsSufficient);
-        Assert.Equal(22203m, exception.Result.MinimumBudget);
-        Assert.Equal(203m, exception.Result.Shortfall);
+        Assert.Equal(18598m, exception.Result.MinimumBudget);
+        Assert.Equal(598m, exception.Result.Shortfall);
     }
 
     [Fact]
@@ -148,9 +148,9 @@ public class ConfiguratorEngineGenerateBuildTests
     {
         var engine = CreateEngine();
 
-        var build = await engine.GenerateBuildAsync(Request(22203m));
+        var build = await engine.GenerateBuildAsync(Request(18598m));
 
-        Assert.Equal(22203m, build.TotalPrice);
+        Assert.Equal(18598m, build.TotalPrice);
         Assert.True(build.IsCompatible);
     }
 
@@ -200,10 +200,10 @@ public class ConfiguratorEngineGenerateBuildTests
     {
         var engine = CreateEngine();
 
-        var build = await engine.GenerateBuildAsync(Request(24555m, Category.Office));
+        var build = await engine.GenerateBuildAsync(Request(13850m, Category.Office));
 
-        Assert.Equal(24555m, build.TotalPrice);
-        Assert.Equal(102, IdOf(build, ComponentCategory.Cpu));
+        Assert.Equal(13850m, build.TotalPrice);
+        Assert.Equal(111, IdOf(build, ComponentCategory.Cpu));
     }
 
     [Fact]
@@ -212,9 +212,9 @@ public class ConfiguratorEngineGenerateBuildTests
         var engine = CreateEngine();
 
         var exception = await Assert.ThrowsAsync<InsufficientBudgetException>(
-            () => engine.GenerateBuildAsync(Request(24554m, Category.Office)));
+            () => engine.GenerateBuildAsync(Request(13849m, Category.Office)));
 
-        Assert.Equal(24555m, exception.Result.MinimumBudget);
+        Assert.Equal(13850m, exception.Result.MinimumBudget);
         Assert.Equal(1m, exception.Result.Shortfall);
     }
 
@@ -244,11 +244,11 @@ public class ConfiguratorEngineGenerateBuildTests
         var engine = CreateEngine();
 
         var exception = await Assert.ThrowsAsync<InsufficientBudgetException>(
-            () => engine.GenerateBuildAsync(Request(17000m, Category.Office)));
+            () => engine.GenerateBuildAsync(Request(10000m, Category.Office)));
 
         Assert.False(exception.Result.IsSufficient);
-        Assert.Equal(24555m, exception.Result.MinimumBudget);
-        Assert.Equal(7555m, exception.Result.Shortfall);
+        Assert.Equal(13850m, exception.Result.MinimumBudget);
+        Assert.Equal(3850m, exception.Result.Shortfall);
     }
 
     [Fact]
@@ -275,10 +275,10 @@ public class ConfiguratorEngineGenerateBuildTests
         var engine = CreateEngine();
 
         var exception = await Assert.ThrowsAsync<InsufficientBudgetException>(
-            () => engine.GenerateBuildAsync(Request(27000m, Category.Office, requireWifi: true)));
+            () => engine.GenerateBuildAsync(Request(14000m, Category.Office, requireWifi: true)));
 
-        Assert.Equal(29355m, exception.Result.MinimumBudget);
-        Assert.Equal(2355m, exception.Result.Shortfall);
+        Assert.Equal(15650m, exception.Result.MinimumBudget);
+        Assert.Equal(1650m, exception.Result.Shortfall);
     }
 
     [Fact]
@@ -286,10 +286,10 @@ public class ConfiguratorEngineGenerateBuildTests
     {
         var engine = CreateEngine();
 
-        var build = await engine.GenerateBuildAsync(Request(29355m, Category.Office, requireWifi: true));
+        var build = await engine.GenerateBuildAsync(Request(15650m, Category.Office, requireWifi: true));
 
-        Assert.Equal(29355m, build.TotalPrice);
-        Assert.Equal(104, IdOf(build, ComponentCategory.Cpu));
+        Assert.Equal(15650m, build.TotalPrice);
+        Assert.Equal(111, IdOf(build, ComponentCategory.Cpu));
         Assert.Equal(203, IdOf(build, ComponentCategory.Motherboard));
     }
 
@@ -299,9 +299,9 @@ public class ConfiguratorEngineGenerateBuildTests
         var engine = CreateEngine();
 
         var exception = await Assert.ThrowsAsync<InsufficientBudgetException>(
-            () => engine.GenerateBuildAsync(Request(29354m, Category.Office, requireWifi: true)));
+            () => engine.GenerateBuildAsync(Request(15649m, Category.Office, requireWifi: true)));
 
-        Assert.Equal(29355m, exception.Result.MinimumBudget);
+        Assert.Equal(15650m, exception.Result.MinimumBudget);
     }
 
     [Theory]

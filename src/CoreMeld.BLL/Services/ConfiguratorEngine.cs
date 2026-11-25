@@ -65,12 +65,7 @@ public class ConfiguratorEngine:IConfiguratorEngine
     }
 
     var categories = ResolveCategories(request);
-
-    var threshold = await _budgetCalculator.CheckThresholdAsync(request.Budget, categories);
-    if (!threshold.IsSufficient)
-    {
-        throw new InsufficientBudgetException(threshold);
-    }
+    
 
     var limits = _budgetCalculator.CalculateAllocation(request.Budget, categories);
     var needGpu = limits[ComponentCategory.Gpu] > 0m;
