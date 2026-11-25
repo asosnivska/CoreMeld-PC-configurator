@@ -21,4 +21,18 @@ public class InMemoryComponentRepository : IComponentRepository
 
         return Task.FromResult<decimal?>(prices.Count == 0 ? null : prices.Min());
     }
+
+    public Task<IEnumerable<Component>> SearchByNameAsync(string query, int? categoryId = null)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return Task.FromResult<IEnumerable<Component>>(Array.Empty<Component>());
+
+        var text = query.Trim();
+        var result = InMemoryCatalog.All
+            .Where(c => (categoryId is null || c.CategoryId == categoryId)
+                        && c.Name.Contains(text, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        return Task.FromResult<IEnumerable<Component>>(result);
+    }
 }

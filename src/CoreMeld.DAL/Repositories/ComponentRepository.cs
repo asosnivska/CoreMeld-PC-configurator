@@ -180,6 +180,46 @@ public class ComponentRepository : IComponentRepository
 
         return components;
     }
+
+    public async Task<IEnumerable<Component>> SearchByNameAsync(string query, int? categoryId = null)
+    {
+        var components = new List<Component>();
+
+        if (string.IsNullOrWhiteSpace(query))
+            return components;
+
+        await using var connection = _dbManager.CreateConnection();
+        await connection.OpenAsync();
+
+        var sql = new StringBuilder(
+            "SELECT id, name, price, brand, color, image_url, category_id FROM components WHERE name ILIKE @pattern ESCAPE '\\'");
+
+        await using var command = new NpgsqlCommand { Connection = connection };
+        command.Parameters.AddWithValue("pattern", $"%{EscapeLike(query.Trim())}%");
+
+        if (categoryId.HasValue)
+        {
+            sql.Append(" AND category_id = @categoryId");
+            command.Parameters.AddWithValue("categoryId", categoryId.Value);
+        }
+
+        sql.Append(" ORDER BY id ASC");
+        command.CommandText = sql.ToString();
+
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var component = new Component();
+            RepositoryQueryHelper.PopulateComponent(component, reader);
+            components.Add(component);
+        }
+
+        return components;
+    }
+
+    private static string EscapeLike(string value)
+        => value.Replace("\\", "\\\\").Replace("%", "\\%").Replace("_", "\\_");
+
     public async Task<decimal?> GetMinPriceAsync(ComponentCategory category)
     {
         await using var connection = _dbManager.CreateConnection();
