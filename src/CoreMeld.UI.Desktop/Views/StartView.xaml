@@ -4,9 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             Background="White"
+             Background="#EEFAFF"
              d:DesignHeight="900" d:DesignWidth="1440">
-    
+
     <UserControl.Resources>
         <Style x:Key="InfoIcon" TargetType="TextBlock">
             <Setter Property="Text" Value="ⓘ"/>
@@ -15,6 +15,39 @@
             <Setter Property="Cursor" Value="Help"/>
             <Setter Property="ToolTipService.ShowDuration" Value="15000"/>
             <Setter Property="ToolTipService.InitialShowDelay" Value="0"/>
+        </Style>
+        <Style x:Key="TaskCard" TargetType="ToggleButton">
+            <Setter Property="Margin" Value="0,0,12,12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Box" Background="White" BorderBrush="#D6D6D6" BorderThickness="1"
+                                CornerRadius="4" Padding="14,12" MinHeight="72">
+                            <Grid>
+                                <ContentPresenter Margin="0,0,34,0" VerticalAlignment="Center"/>
+                                <Grid x:Name="Check" Visibility="Collapsed" Width="24" Height="24"
+                                      HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <Ellipse Fill="#2B6CA3"/>
+                                    <Path Data="M 7 12.5 L 10.5 16 L 17 9" Stroke="White" StrokeThickness="2"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Box" Property="BorderBrush" Value="#7BAAF7"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Box" Property="Background" Value="#E8F4FB"/>
+                                <Setter TargetName="Box" Property="BorderBrush" Value="#2B6CA3"/>
+                                <Setter TargetName="Check" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
         <Style x:Key="AddButton" TargetType="Button">
             <Setter Property="Width" Value="90"/>
@@ -34,7 +67,7 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -50,17 +83,21 @@
         </Border>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <Border Background="{StaticResource PanelBrush}" MaxWidth="742"
+            <Border Background="White" MaxWidth="742"
             Margin="30,36,30,60" Padding="30,24,30,40" MinHeight="886">
                 <StackPanel>
 
-                    <TextBlock Text="Створіть свій ідеальний ПК" Style="{StaticResource PageTitle}"/>
-                    <TextBlock Text="Заповніть усі дані, щоб конфігурація була збалансована відносно ваших потреб і бюджету"
+                    <TextBox Text="Створіть свій ідеальний ПК" Style="{StaticResource SelectablePageTitle}"/>
+                    <TextBox Text="Заповніть усі дані, щоб конфігурація була збалансована відносно ваших потреб і бюджету"
+                       Style="{StaticResource SelectableText}"
                        Foreground="{StaticResource TextBrush}" HorizontalAlignment="Center"
-                       TextWrapping="Wrap" TextAlignment="Center" Margin="0,12,0,0"/>
+                       TextAlignment="Center" Margin="0,12,0,0"/>
 
                     <Grid Width="220" Margin="0,18,0,0">
-                        <Border Background="{StaticResource DarkFieldBrush}" CornerRadius="5" BorderThickness="1">
+                        <Border Background="White" CornerRadius="5" BorderThickness="1">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#AEAEAE" BlurRadius="4" ShadowDepth="2" Direction="270" Opacity="1"/>
+                            </Border.Effect>
                             <Border.Style>
                                 <Style TargetType="Border">
                                     <Setter Property="BorderBrush" Value="Transparent"/>
@@ -73,33 +110,38 @@
                             </Border.Style>
                             <TextBox x:Name="BudgetBox" Height="38"
                  Text="{Binding BudgetText, UpdateSourceTrigger=PropertyChanged}"
-                 Background="Transparent" Foreground="White" CaretBrush="White"
-                 BorderThickness="0" FontWeight="SemiBold"
+                 Background="Transparent" Foreground="{StaticResource NavyBrush}" CaretBrush="{StaticResource NavyBrush}"                 BorderThickness="0" FontWeight="SemiBold"
                  Padding="12,0,50,0" VerticalContentAlignment="Center"/>
                         </Border>
 
-                        <TextBlock Text="Введіть бюджет" Foreground="#D0D0D0" FontWeight="SemiBold"
+                        <TextBlock Text="Введіть бюджет" Foreground="{StaticResource NavyBrush}" FontWeight="SemiBold"
                VerticalAlignment="Center" Margin="13,0,50,0" IsHitTestVisible="False">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Text, ElementName=BudgetBox}" Value="">
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Text, ElementName=BudgetBox}" Value=""/>
+                                                <Condition Binding="{Binding IsKeyboardFocused, ElementName=BudgetBox}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
                                             <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
+                                        </MultiDataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
 
-                        <TextBlock Text="UAH" Foreground="White" VerticalAlignment="Center"
+                        <TextBlock Text="UAH" Foreground="{StaticResource NavyBrush}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"
                HorizontalAlignment="Right" Margin="0,0,12,0" IsHitTestVisible="False"/>
                     </Grid>
 
-                    <TextBlock Width="220" Height="18" Margin="0,4,0,4"
-                               Text="{Binding BudgetError}" Foreground="#C0392B" FontSize="12"/>
+                    <TextBox Width="220" Height="18" Margin="0,4,0,4" Padding="0"
+                             Text="{Binding BudgetError, Mode=OneWay}" IsReadOnly="True"
+                             Background="Transparent" BorderThickness="0"
+                             Foreground="#C0392B" FontSize="12"/>
 
-                    <TextBlock Text="Оберіть категорію" Style="{StaticResource SectionTitle}"/>
+                    <TextBox Text="Оберіть категорію" Style="{StaticResource SelectableSection}"/>
                     <ComboBox Style="{StaticResource DropdownField}"
                               ItemsSource="{Binding CategoryOptions}"
                               SelectedItem="{Binding SelectedCategory}"
@@ -110,38 +152,51 @@
                             <TextBlock Text="Розрахувати відносно власних потреб" Style="{StaticResource SectionTitle}"/>
                         </Expander.Header>
                         <StackPanel>
-                            <TextBlock Text="Розмістіть потреби в порядку пріоритетів" Foreground="{StaticResource TextBrush}"/>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="1." Width="24" VerticalAlignment="Center" Foreground="Gray"/>
-                                <ComboBox Style="{StaticResource DropdownField}">
-                                    <ComboBoxItem Content="Оберіть задачу зі списку"/>
-                                </ComboBox>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="2." Width="24" VerticalAlignment="Center" Foreground="Gray"/>
-                                <ComboBox Style="{StaticResource DropdownField}">
-                                    <ComboBoxItem Content="Оберіть задачу зі списку"/>
-                                </ComboBox>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="3." Width="24" VerticalAlignment="Center" Foreground="Gray"/>
-                                <ComboBox Style="{StaticResource DropdownField}">
-                                    <ComboBoxItem Content="Оберіть задачу зі списку"/>
-                                </ComboBox>
-                            </StackPanel>
-                            <Button Content="+" Style="{StaticResource AddButton}"/>
+                            <TextBox Text="Оберіть одну або кілька задач:" Style="{StaticResource SelectableText}" Foreground="{StaticResource TextBrush}"/>
+                            <ItemsControl ItemsSource="{Binding TaskGroups}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="0,14,0,0">
+                                            <TextBox Text="{Binding Title, Mode=OneWay}" Style="{StaticResource SelectableText}"
+                                                     FontWeight="Bold" Foreground="#222222"
+                                                     Margin="0,0,0,8"/>
+                                            <ItemsControl ItemsSource="{Binding Cards}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <UniformGrid Columns="2"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <ToggleButton Style="{StaticResource TaskCard}"
+                                                                      IsChecked="{Binding IsSelected, Mode=TwoWay}">
+                                                            <StackPanel>
+                                                                <TextBlock Text="{Binding Title}" FontWeight="Bold"
+                                                                           Foreground="{StaticResource NavyBrush}" TextWrapping="Wrap"/>
+                                                                <TextBlock Text="{Binding Subtitle}" FontSize="11" Foreground="#666666"
+                                                                           TextWrapping="Wrap" Margin="0,4,0,0"
+                                                                           Visibility="{Binding HasSubtitle, Converter={StaticResource BoolToVisibility}}"/>
+                                                            </StackPanel>
+                                                        </ToggleButton>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </StackPanel>
                     </Expander>
 
-                    <Expander Style="{StaticResource SectionExpander}" Margin="0,30,0,0">
-                        
+                    <Expander Style="{StaticResource SectionExpander}" Margin="0,30,0,0" IsExpanded="False">
+
                         <Expander.Header>
                             <TextBlock Text="Додаткові фільтри" Style="{StaticResource SectionTitle}"/>
                         </Expander.Header>
-                        
+
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Обсяг оперативної пам'яті" Foreground="{StaticResource TextBrush}"/>
+                                <TextBox Text="Обсяг оперативної пам'яті" Style="{StaticResource SelectableText}" Foreground="{StaticResource TextBrush}"/>
                                 <TextBlock Style="{StaticResource InfoIcon}" ToolTip="{StaticResource Hint.Ram}"/>
                             </StackPanel>
                             <ComboBox Style="{StaticResource DropdownField}"
@@ -150,7 +205,7 @@
                                       DisplayMemberPath="Title"/>
 
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Тип пристрою зберігання даних" Foreground="{StaticResource TextBrush}"/>
+                                <TextBox Text="Тип пристрою зберігання даних" Style="{StaticResource SelectableText}" Foreground="{StaticResource TextBrush}"/>
                                 <TextBlock Style="{StaticResource InfoIcon}" ToolTip="{StaticResource Hint.StorageType}"/>
                             </StackPanel>
                             <ComboBox Style="{StaticResource DropdownField}"
@@ -159,7 +214,7 @@
                                       DisplayMemberPath="Title"/>
 
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Об'єм пристрою зберігання даних" Foreground="{StaticResource TextBrush}"/>
+                                <TextBox Text="Об'єм пристрою зберігання даних" Style="{StaticResource SelectableText}" Foreground="{StaticResource TextBrush}"/>
                                 <TextBlock Style="{StaticResource InfoIcon}" ToolTip="{StaticResource Hint.StorageCapacity}"/>
                             </StackPanel>
                             <ComboBox Style="{StaticResource DropdownField}"
@@ -168,7 +223,7 @@
                                       DisplayMemberPath="Title"/>
 
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Система охолодження" Foreground="{StaticResource TextBrush}"/>
+                                <TextBox Text="Система охолодження" Style="{StaticResource SelectableText}" Foreground="{StaticResource TextBrush}"/>
                                 <TextBlock Style="{StaticResource InfoIcon}" ToolTip="{StaticResource Hint.Cooling}"/>
                             </StackPanel>
                             <ComboBox Style="{StaticResource DropdownField}"
@@ -176,7 +231,7 @@
                                       SelectedItem="{Binding SelectedCooling}"
                                       DisplayMemberPath="Title"/>
 
-                            <TextBlock Text="Колір корпусу" Foreground="{StaticResource TextBrush}"/>
+                            <TextBox Text="Колір корпусу" Style="{StaticResource SelectableText}" Foreground="{StaticResource TextBrush}"/>
                             <ComboBox Style="{StaticResource DropdownField}"
                                       ItemsSource="{Binding ColorOptions}"
                                       SelectedItem="{Binding SelectedColor}"
@@ -194,15 +249,17 @@
                     <Button Content="Зібрати ПК" Style="{StaticResource PrimaryButton}"
                             Command="{Binding BuildCommand}" 
                             HorizontalAlignment="Center" Margin="0,24,0,0"/>
-                    
-                    <TextBlock Text="Підбираємо збірку…" Foreground="{StaticResource TextBrush}"
+
+                    <TextBox Text="Підбираємо збірку…" Style="{StaticResource SelectableText}"
+                               Foreground="{StaticResource TextBrush}"
                                HorizontalAlignment="Center" Margin="0,12,0,0"
-                               Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}"/>         
+                               Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}"/>
 
-                    <TextBlock Text="{Binding ErrorMessage}" Foreground="#C0392B" TextWrapping="Wrap"
-                               TextAlignment="Center" HorizontalAlignment="Center" Margin="0,12,0,0"
-                               Visibility="{Binding HasError, Converter={StaticResource BoolToVisibility}}"/>       
-
+                    <TextBox Text="{Binding ErrorMessage, Mode=OneWay}" IsReadOnly="True"
+                             Background="Transparent" BorderThickness="0"
+                             Foreground="#C0392B" TextWrapping="Wrap"
+                             TextAlignment="Center" HorizontalAlignment="Center" Margin="0,12,0,0"
+                             Visibility="{Binding HasError, Converter={StaticResource BoolToVisibility}}"/>
                 </StackPanel>
             </Border>
         </ScrollViewer>
