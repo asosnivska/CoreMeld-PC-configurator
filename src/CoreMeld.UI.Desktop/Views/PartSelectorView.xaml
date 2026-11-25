@@ -202,7 +202,7 @@
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="270"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
@@ -211,7 +211,7 @@
                     <StackPanel Margin="10,0,24,24">
 
                         <TextBox Text="Ціна:" Style="{StaticResource FilterTitle}"/>
-                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="10,8,0,0">
                             <TextBox Style="{StaticResource FilterBox}" Tag="від" Width="76"/>
                             <TextBox Style="{StaticResource FilterBox}" Tag="до" Width="78" Margin="10,0"/>
                             <TextBox Text="UAH" Style="{StaticResource SelectableText}" FontSize="12"
@@ -219,8 +219,7 @@
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
-                            <TextBox Text="Сортування:" Style="{StaticResource SelectableText}" FontSize="12"
-                                     FontWeight="Medium" Foreground="{StaticResource TextBrush}"
+                            <TextBox Text="Сортування:" Style="{StaticResource FilterTitle}"
                                      VerticalAlignment="Center" Margin="0,0,10,0"/>
                             <ComboBox Style="{StaticResource SortCombo}">
                                 <ComboBoxItem Content="від дешевих"/>

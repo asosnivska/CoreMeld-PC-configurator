@@ -12,6 +12,9 @@ namespace CoreMeld.UI.Desktop.ViewModels;
 public class StartViewModel : ViewModelBase
 {
     private static readonly CultureInfo Ua = new("uk-UA");
+
+    private const decimal MaxBudget = 10_000_000m;
+    private const string BudgetRangeMessage = "Введіть суму від 1 до 10 000 000 грн";
     private readonly IConfiguratorEngine _engine;
     private readonly Action<PCBuildDto, decimal> _showResult;
 
@@ -167,7 +170,7 @@ public class StartViewModel : ViewModelBase
                 ErrorMessage = null;
                 BudgetError = string.IsNullOrWhiteSpace(value) || TryParseBudget(value, out _)
                     ? null
-                    : "Введіть додатне число";
+                    : BudgetRangeMessage;
             }
         }
     }
@@ -235,7 +238,7 @@ public class StartViewModel : ViewModelBase
         {
             BudgetError = string.IsNullOrWhiteSpace(BudgetText)
                 ? "Вкажіть бюджет"
-                : "Введіть додатне число";
+                : BudgetRangeMessage;
 
             ErrorMessage = BudgetError;
             return;
@@ -280,7 +283,7 @@ public class StartViewModel : ViewModelBase
         catch (InvalidOperationException ex)
         {
             Debug.WriteLine(ex);
-            ErrorMessage = "Не вдалося підібрати збірку на такий бюджет. Спробуйте збільшити бюджет або змінити задачі";
+            ErrorMessage = "Не вдалося підібрати збірку";
         }
         catch (ArgumentException ex)
         {
@@ -311,7 +314,6 @@ public class StartViewModel : ViewModelBase
         var text = input.Replace(" ", "").Replace(" ", "").Replace(',', '.');
 
         return decimal.TryParse(text, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out budget)
-               && budget is > 0 and <= 10_000_000m;
+               && budget is >= 1 and <= MaxBudget;
     }
 }
-

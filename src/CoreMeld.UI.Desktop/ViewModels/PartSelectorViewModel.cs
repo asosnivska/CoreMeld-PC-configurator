@@ -42,7 +42,7 @@ public class PartSelectorViewModel : ViewModelBase
                 if (parameter is PartItemViewModel item)
                     _ = SelectAsync(item);
             },
-            parameter => parameter is PartItemViewModel { IsCurrent: false });
+            parameter => !IsLoading && parameter is PartItemViewModel { IsCurrent: false });
 
         _ = LoadAsync();
     }
@@ -109,6 +109,8 @@ public class PartSelectorViewModel : ViewModelBase
 
     private async Task SelectAsync(PartItemViewModel item)
     {
+        if (IsLoading) return;
+
         ErrorMessage = null;
         IsLoading = true;
 
