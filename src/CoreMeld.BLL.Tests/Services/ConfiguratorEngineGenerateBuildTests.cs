@@ -26,6 +26,13 @@ public class ConfiguratorEngineGenerateBuildTests
         int? ramGb = null)
         => new(budget, color, requireWifi, null, null, category, null, ramGb, null);
 
+    private static BuildRequestDto RequestWithTasks(
+        decimal budget, Category? category, params UserTask[] tasks)
+        => new(budget, null, null, null, null, category, tasks, null, null);
+
+    private static int IdOf(PCBuildDto build, ComponentCategory category)
+        => build.Components.Single(c => c.Category == category).Id;
+
     [Fact]
     public async Task GenerateBuildAsync_NullRequest_Throws()
     {
@@ -54,6 +61,76 @@ public class ConfiguratorEngineGenerateBuildTests
     }
 
     [Fact]
+    public async Task GenerateBuildAsync_NoCategoryAndEmptyPriorities_Throws()
+    {
+        var engine = CreateEngine();
+
+        await Assert.ThrowsAsync<ArgumentException>(
+            () => engine.GenerateBuildAsync(RequestWithTasks(35000m, null)));
+    }
+
+    [Fact]
+    public async Task GenerateBuildAsync_PrioritiesOnly_UsesTasksInsteadOfThrowing()
+    {
+        var engine = CreateEngine();
+
+        var build = await engine.GenerateBuildAsync(RequestWithTasks(60000m, null, UserTask.OfficeWork));
+
+        Assert.True(build.IsCompatible);
+        Assert.True(build.TotalPrice <= 60000m);
+        Assert.DoesNotContain(build.Components, c => c.Category == ComponentCategory.Gpu);
+    }
+
+    [Fact]
+    public async Task GenerateBuildAsync_TasksFromSeveralCategories_CombineWeights()
+    {
+        var engine = CreateEngine();
+
+        var build = await engine.GenerateBuildAsync(
+            RequestWithTasks(35000m, null, UserTask.OfficeWork, UserTask.Gaming1080p));
+
+        Assert.True(build.IsCompatible);
+        Assert.True(build.TotalPrice <= 35000m);
+        Assert.Contains(build.Components, c => c.Category == ComponentCategory.Gpu);
+    }
+
+    [Fact]
+    public async Task GenerateBuildAsync_CategoryAndTasks_AreCombined()
+    {
+        var engine = CreateEngine();
+
+        var build = await engine.GenerateBuildAsync(
+            RequestWithTasks(35000m, Category.Office, UserTask.Gaming1080p));
+
+        Assert.True(build.IsCompatible);
+        Assert.True(build.TotalPrice <= 35000m);
+        Assert.Contains(build.Components, c => c.Category == ComponentCategory.Gpu);
+    }
+
+    [Fact]
+    public async Task GenerateBuildAsync_TaskMatchesSelectedCategory_BuildsLikeCategoryAlone()
+    {
+        var engine = CreateEngine();
+
+        var build = await engine.GenerateBuildAsync(
+            RequestWithTasks(60000m, Category.Office, UserTask.OfficeWork));
+
+        Assert.True(build.IsCompatible);
+        Assert.DoesNotContain(build.Components, c => c.Category == ComponentCategory.Gpu);
+    }
+
+    [Fact]
+    public async Task GenerateBuildAsync_CategoryOnlyWithEmptyTasks_UsesCategory()
+    {
+        var engine = CreateEngine();
+
+        var build = await engine.GenerateBuildAsync(RequestWithTasks(35000m, Category.GamingFullHd));
+
+        Assert.True(build.IsCompatible);
+        Assert.Contains(build.Components, c => c.Category == ComponentCategory.Gpu);
+    }
+
+    [Fact]
     public async Task GenerateBuildAsync_BudgetBelowMinimum_ThrowsWithShortfall()
     {
         var engine = CreateEngine();
@@ -64,6 +141,17 @@ public class ConfiguratorEngineGenerateBuildTests
         Assert.False(exception.Result.IsSufficient);
         Assert.Equal(22203m, exception.Result.MinimumBudget);
         Assert.Equal(203m, exception.Result.Shortfall);
+    }
+
+    [Fact]
+    public async Task GenerateBuildAsync_GamingAtMinimumBudget_Builds()
+    {
+        var engine = CreateEngine();
+
+        var build = await engine.GenerateBuildAsync(Request(22203m));
+
+        Assert.Equal(22203m, build.TotalPrice);
+        Assert.True(build.IsCompatible);
     }
 
     [Fact]
@@ -108,6 +196,29 @@ public class ConfiguratorEngineGenerateBuildTests
     }
 
     [Fact]
+    public async Task GenerateBuildAsync_OfficeAtMinimumBudget_Builds()
+    {
+        var engine = CreateEngine();
+
+        var build = await engine.GenerateBuildAsync(Request(24555m, Category.Office));
+
+        Assert.Equal(24555m, build.TotalPrice);
+        Assert.Equal(102, IdOf(build, ComponentCategory.Cpu));
+    }
+
+    [Fact]
+    public async Task GenerateBuildAsync_OfficeJustBelowMinimum_ReportsRealMinimum()
+    {
+        var engine = CreateEngine();
+
+        var exception = await Assert.ThrowsAsync<InsufficientBudgetException>(
+            () => engine.GenerateBuildAsync(Request(24554m, Category.Office)));
+
+        Assert.Equal(24555m, exception.Result.MinimumBudget);
+        Assert.Equal(1m, exception.Result.Shortfall);
+    }
+
+    [Fact]
     public async Task GenerateBuildAsync_TotalPriceEqualsSumOfComponentPrices()
     {
         var engine = CreateEngine();
@@ -128,7 +239,7 @@ public class ConfiguratorEngineGenerateBuildTests
     }
 
     [Fact]
-    public async Task GenerateBuildAsync_CheapestPartsExceedBudget_ThrowsInsufficientBudget()
+    public async Task GenerateBuildAsync_CheapestPartsExceedBudget_ThrowsInsufficientBudgetWithRealMinimum()
     {
         var engine = CreateEngine();
 
@@ -136,7 +247,8 @@ public class ConfiguratorEngineGenerateBuildTests
             () => engine.GenerateBuildAsync(Request(17000m, Category.Office)));
 
         Assert.False(exception.Result.IsSufficient);
-        Assert.True(exception.Result.Shortfall > 0m);
+        Assert.Equal(24555m, exception.Result.MinimumBudget);
+        Assert.Equal(7555m, exception.Result.Shortfall);
     }
 
     [Fact]
@@ -158,11 +270,71 @@ public class ConfiguratorEngineGenerateBuildTests
     }
 
     [Fact]
-    public async Task GenerateBuildAsync_WifiRequiredButNoSuchBoardForChosenCpu_ThrowsInvalidOperation()
+    public async Task GenerateBuildAsync_OfficeWithWifiBelowMinimum_ReportsRealMinimumInsteadOfDeadEnd()
     {
         var engine = CreateEngine();
 
-        await Assert.ThrowsAsync<InvalidOperationException>(
+        var exception = await Assert.ThrowsAsync<InsufficientBudgetException>(
             () => engine.GenerateBuildAsync(Request(27000m, Category.Office, requireWifi: true)));
+
+        Assert.Equal(29355m, exception.Result.MinimumBudget);
+        Assert.Equal(2355m, exception.Result.Shortfall);
+    }
+
+    [Fact]
+    public async Task GenerateBuildAsync_OfficeWithWifiAtMinimumBudget_BuildsWithWifiBoard()
+    {
+        var engine = CreateEngine();
+
+        var build = await engine.GenerateBuildAsync(Request(29355m, Category.Office, requireWifi: true));
+
+        Assert.Equal(29355m, build.TotalPrice);
+        Assert.Equal(104, IdOf(build, ComponentCategory.Cpu));
+        Assert.Equal(203, IdOf(build, ComponentCategory.Motherboard));
+    }
+
+    [Fact]
+    public async Task GenerateBuildAsync_OfficeWithWifiJustBelowMinimum_Throws()
+    {
+        var engine = CreateEngine();
+
+        var exception = await Assert.ThrowsAsync<InsufficientBudgetException>(
+            () => engine.GenerateBuildAsync(Request(29354m, Category.Office, requireWifi: true)));
+
+        Assert.Equal(29355m, exception.Result.MinimumBudget);
+    }
+
+    [Theory]
+    [InlineData(Category.Office)]
+    [InlineData(Category.GamingFullHd)]
+    public async Task GenerateBuildAsync_BudgetGrowth_OnceSucceedsNeverFailsAgain(Category category)
+    {
+        var engine = CreateEngine();
+        var succeeded = false;
+
+        for (var budget = 15000m; budget <= 100000m; budget += 500m)
+        {
+            PCBuildDto? build = null;
+            try
+            {
+                build = await engine.GenerateBuildAsync(Request(budget, category));
+            }
+            catch (InsufficientBudgetException)
+            {
+            }
+
+            if (build is not null)
+            {
+                succeeded = true;
+                Assert.True(build.TotalPrice <= budget);
+                Assert.True(build.IsCompatible);
+            }
+            else
+            {
+                Assert.False(succeeded, $"Бюджет {budget} впав після успіху на меншому бюджеті.");
+            }
+        }
+
+        Assert.True(succeeded);
     }
 }
