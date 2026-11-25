@@ -9,7 +9,7 @@ using CoreMeld.Domain.Interfaces.Repositories;
 using CoreMeld.Domain.Models;
 using static CoreMeld.BLL.Tests.Fakes.FakeAllocationSettingsProvider;
 
-namespace CoreMeld.BLL.Tests.Services;
+namespace CoreMeld.BLL.Tests.Integration;
 
 public class ConfiguratorEngineIntegrationTests
 {

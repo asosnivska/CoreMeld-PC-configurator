@@ -9,7 +9,7 @@ namespace CoreMeld.DAL.Repositories;
 public class ComponentRepository : IComponentRepository
 {
     private readonly DbConnectionManager _dbManager;
-
+    private const int SearchResultLimit = 50;
     public ComponentRepository(DbConnectionManager dbManager)
     {
         _dbManager = dbManager;
@@ -203,8 +203,8 @@ public class ComponentRepository : IComponentRepository
             command.Parameters.AddWithValue("categoryId", categoryId.Value);
         }
 
-        sql.Append(" ORDER BY id ASC");
-        command.CommandText = sql.ToString();
+        sql.Append(" ORDER BY id ASC LIMIT @limit");
+        command.Parameters.AddWithValue("limit", SearchResultLimit);
 
         await using var reader = await command.ExecuteReaderAsync();
         while (await reader.ReadAsync())

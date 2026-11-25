@@ -7,6 +7,9 @@ using static CoreMeld.BLL.Tests.Fakes.FakeAllocationSettingsProvider;
 
 namespace CoreMeld.BLL.Tests.Services;
 
+// Мінімальні бюджети залежать від InMemoryCatalog (сума найдешевшої сумісної збірки):
+// Gaming 18 598, Office 13 850, Office + Wi-Fi 15 650 (CPU 111, плата 203).
+// Якщо змінити ціни чи склад каталогу, ці тести впадуть, і числа треба перерахувати.
 public class ConfiguratorEngineGenerateBuildTests
 {
     private static ConfiguratorEngine CreateEngine()
@@ -138,6 +141,7 @@ public class ConfiguratorEngineGenerateBuildTests
         var exception = await Assert.ThrowsAsync<InsufficientBudgetException>(
             () => engine.GenerateBuildAsync(Request(18000m)));
 
+        // 18598 = мінімальна збірка Gaming у InMemoryCatalog, 598 = 18598 - 18000
         Assert.False(exception.Result.IsSufficient);
         Assert.Equal(18598m, exception.Result.MinimumBudget);
         Assert.Equal(598m, exception.Result.Shortfall);
@@ -150,6 +154,7 @@ public class ConfiguratorEngineGenerateBuildTests
 
         var build = await engine.GenerateBuildAsync(Request(18598m));
 
+        // 18598 = мінімальна збірка Gaming у InMemoryCatalog
         Assert.Equal(18598m, build.TotalPrice);
         Assert.True(build.IsCompatible);
     }
@@ -202,6 +207,7 @@ public class ConfiguratorEngineGenerateBuildTests
 
         var build = await engine.GenerateBuildAsync(Request(13850m, Category.Office));
 
+        // 13850 = мінімальна збірка Office у InMemoryCatalog (найдешевший CPU з id 111)
         Assert.Equal(13850m, build.TotalPrice);
         Assert.Equal(111, IdOf(build, ComponentCategory.Cpu));
     }
@@ -214,6 +220,7 @@ public class ConfiguratorEngineGenerateBuildTests
         var exception = await Assert.ThrowsAsync<InsufficientBudgetException>(
             () => engine.GenerateBuildAsync(Request(13849m, Category.Office)));
 
+        // 13850 = мінімум Office у InMemoryCatalog, нестача 1 грн
         Assert.Equal(13850m, exception.Result.MinimumBudget);
         Assert.Equal(1m, exception.Result.Shortfall);
     }
@@ -246,6 +253,7 @@ public class ConfiguratorEngineGenerateBuildTests
         var exception = await Assert.ThrowsAsync<InsufficientBudgetException>(
             () => engine.GenerateBuildAsync(Request(10000m, Category.Office)));
 
+        // 13850 = мінімум Office у InMemoryCatalog, 3850 = 13850 - 10000
         Assert.False(exception.Result.IsSufficient);
         Assert.Equal(13850m, exception.Result.MinimumBudget);
         Assert.Equal(3850m, exception.Result.Shortfall);
@@ -277,6 +285,7 @@ public class ConfiguratorEngineGenerateBuildTests
         var exception = await Assert.ThrowsAsync<InsufficientBudgetException>(
             () => engine.GenerateBuildAsync(Request(14000m, Category.Office, requireWifi: true)));
 
+        // 15650 = мінімум Office з Wi-Fi у InMemoryCatalog, 1650 = 15650 - 14000
         Assert.Equal(15650m, exception.Result.MinimumBudget);
         Assert.Equal(1650m, exception.Result.Shortfall);
     }
@@ -288,6 +297,7 @@ public class ConfiguratorEngineGenerateBuildTests
 
         var build = await engine.GenerateBuildAsync(Request(15650m, Category.Office, requireWifi: true));
 
+        // 15650 = мінімум Office з Wi-Fi: CPU 111 + плата 203 (найдешевша з Wi-Fi)
         Assert.Equal(15650m, build.TotalPrice);
         Assert.Equal(111, IdOf(build, ComponentCategory.Cpu));
         Assert.Equal(203, IdOf(build, ComponentCategory.Motherboard));
@@ -301,6 +311,7 @@ public class ConfiguratorEngineGenerateBuildTests
         var exception = await Assert.ThrowsAsync<InsufficientBudgetException>(
             () => engine.GenerateBuildAsync(Request(15649m, Category.Office, requireWifi: true)));
 
+        // 15650 = мінімум Office з Wi-Fi у InMemoryCatalog
         Assert.Equal(15650m, exception.Result.MinimumBudget);
     }
 
