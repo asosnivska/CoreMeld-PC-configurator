@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: Збірка та тести        
+    runs-on: windows-latest
+    steps:
+      - name: Завантаження коду    
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore CoreMeld.PcConfigurator.sln
+
+      - name: Build
+        run: dotnet build CoreMeld.PcConfigurator.sln --no-restore -c Release
+
+      - name: Test
+        run: dotnet test CoreMeld.PcConfigurator.sln --no-build -c Release --verbosity normal
+      
+
