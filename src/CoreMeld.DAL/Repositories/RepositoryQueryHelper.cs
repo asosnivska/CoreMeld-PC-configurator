@@ -56,6 +56,9 @@ internal static class RepositoryQueryHelper
             command.Parameters.AddWithValue("nameContains", $"%{nameContains.Trim()}%");
         }
 
+        // Stable order, so LIMIT always returns the same rows.
+        sql.Append(" ORDER BY c.price ASC, c.id ASC");
+
         if (limit.HasValue)
         {
             sql.Append(" LIMIT @limit");

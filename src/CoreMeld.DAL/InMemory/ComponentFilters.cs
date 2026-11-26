@@ -30,6 +30,9 @@ internal static class ComponentFilters
         if (!string.IsNullOrWhiteSpace(nameContains))
             query = query.Where(c => c.Name.Contains(nameContains, StringComparison.OrdinalIgnoreCase));
 
+        // Same order as the SQL repositories: price, then id.
+        query = query.OrderBy(c => c.Price).ThenBy(c => c.Id);
+
         if (limit.HasValue)
             query = query.Take(limit.Value);
 

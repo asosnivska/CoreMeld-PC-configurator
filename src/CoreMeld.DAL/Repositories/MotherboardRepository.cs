@@ -133,7 +133,9 @@ public class MotherboardRepository : IMotherboardRepository
         mb.FormFactorId = reader.GetInt32(8);
         mb.Chipset = reader.GetString(9);
         var memStr = reader.GetString(10);
-        mb.MemoryType = Enum.TryParse<RamMemoryType>(memStr, true, out var mt) ? mt : RamMemoryType.DDR4;
+        mb.MemoryType = Enum.TryParse<RamMemoryType>(memStr, true, out var mt) && Enum.IsDefined(mt)
+            ? mt
+            : throw new InvalidDataException($"Motherboard {mb.Id}: unknown memory type '{memStr}'.");
         mb.MemorySlots = reader.GetInt32(11);
         mb.MaxMemoryGb = reader.GetInt32(12);
         return mb;

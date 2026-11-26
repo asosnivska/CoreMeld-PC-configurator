@@ -114,7 +114,9 @@ public class GpuRepository : IGpuRepository
         RepositoryQueryHelper.PopulateComponent(gpu, reader);
         gpu.VramGb = reader.GetInt32(7);
         var memStr = reader.GetString(8);
-        gpu.MemoryType = Enum.TryParse<VideoMemoryType>(memStr, true, out var vt) ? vt : VideoMemoryType.GDDR6;
+        gpu.MemoryType = Enum.TryParse<VideoMemoryType>(memStr, true, out var vt) && Enum.IsDefined(vt)
+            ? vt
+            : throw new InvalidDataException($"GPU {gpu.Id}: unknown memory type '{memStr}'.");
         gpu.TdpWatts = reader.GetInt32(9);
         gpu.LengthMm = reader.GetInt32(10);
         gpu.RecommendedPsuWatts = reader.GetInt32(11);

@@ -59,6 +59,9 @@ public class PCCaseRepository : IPCCaseRepository
         await using var command = new NpgsqlCommand();
         command.Connection = connection;
 
+        // TODO: supportedMotherboardFormFactorId is ignored. Board sizes live in the BLL
+        // (form-factors.json), so the board-to-case fit is checked by SpaceControlService.
+
         if (minSupportedGpuLengthMm.HasValue)
         {
             sql.Append(" AND cs.max_gpu_length_mm >= @minSupportedGpuLengthMm");
