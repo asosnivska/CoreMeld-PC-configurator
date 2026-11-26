@@ -1,5 +1,6 @@
 ﻿using CoreMeld.BLL.DTO;
 using CoreMeld.BLL.Exceptions;
+using CoreMeld.BLL.Validation;
 using CoreMeld.Domain.Enums;
 using CoreMeld.Domain.Interfaces.Repositories;
 using CoreMeld.Domain.Models;
@@ -59,6 +60,7 @@ public class ConfiguratorEngine:IConfiguratorEngine
     public async Task<PCBuildDto> GenerateBuildAsync(BuildRequestDto request)
     {
         ArgumentNullException.ThrowIfNull(request);
+        BuildRequestValidator.Validate(request);
         if (request.Budget <= 0)
         {
             throw new ArgumentException("Бюджет має бути більшим за 0.", nameof(request));
