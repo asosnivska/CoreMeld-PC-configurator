@@ -12,7 +12,8 @@ public class GpuRepository : IGpuRepository
 
     private const string BaseSelect = @"
         SELECT c.id, c.name, c.price, c.brand, c.color, c.image_url, c.category_id,
-               g.vram_gb, g.memory_type, g.tdp_watts, g.length_mm, g.recommended_psu_watts
+               g.vram_gb, g.memory_type, g.tdp_watts, g.length_mm, g.recommended_psu_watts,
+               g.power_connector_type, g.power_connector_count
         FROM components c
         JOIN gpus g ON c.id = g.component_id";
 
@@ -120,7 +121,17 @@ public class GpuRepository : IGpuRepository
         gpu.TdpWatts = reader.GetInt32(9);
         gpu.LengthMm = reader.GetInt32(10);
         gpu.RecommendedPsuWatts = reader.GetInt32(11);
+        gpu.PowerConnectorType = reader.IsDBNull(12) ? null : ToPowerConnectorType(gpu.Id, reader.GetInt32(12));
+        gpu.PowerConnectorCount = reader.IsDBNull(13) ? null : reader.GetInt32(13);
         return gpu;
+    }
+
+    private static PowerConnectorType ToPowerConnectorType(int gpuId, int value)
+    {
+        var type = (PowerConnectorType)value;
+        return Enum.IsDefined(type)
+            ? type
+            : throw new InvalidDataException($"GPU {gpuId}: unknown power connector type {value}.");
     }
 }
 
