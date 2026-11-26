@@ -11,7 +11,8 @@ public class PowerSupplyRepository : IPowerSupplyRepository
 
     private const string BaseSelect = @"
         SELECT c.id, c.name, c.price, c.brand, c.color, c.image_url, c.category_id,
-               ps.form_factor_id, ps.wattage, ps.efficiency_rating
+               ps.form_factor_id, ps.wattage, ps.efficiency_rating,
+               ps.pcie_8pin_count, ps.has_12vhpwr
         FROM components c
         JOIN power_supplies ps ON c.id = ps.component_id";
 
@@ -96,6 +97,8 @@ public class PowerSupplyRepository : IPowerSupplyRepository
         ps.FormFactorId = reader.GetInt32(7);
         ps.Wattage = reader.GetInt32(8);
         ps.EfficiencyRating = reader.GetString(9);
+        ps.Pcie8PinCount = reader.IsDBNull(10) ? null : reader.GetInt32(10);
+        ps.Has12Vhpwr = reader.IsDBNull(11) ? null : reader.GetBoolean(11);
         return ps;
     }
 }

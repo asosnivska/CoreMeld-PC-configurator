@@ -26,6 +26,8 @@ internal static class RepositoryQueryHelper
         string? nameContains,
         int? limit)
     {
+        ValidateCommonFilters(minPrice, maxPrice, limit);
+
         if (minPrice.HasValue)
         {
             sql.Append(" AND c.price >= @minPrice");
@@ -56,11 +58,32 @@ internal static class RepositoryQueryHelper
             command.Parameters.AddWithValue("nameContains", $"%{nameContains.Trim()}%");
         }
 
+        // Stable order, so LIMIT always returns the same rows.
+        sql.Append(" ORDER BY c.price ASC, c.id ASC");
+
         if (limit.HasValue)
         {
             sql.Append(" LIMIT @limit");
             command.Parameters.AddWithValue("limit", limit.Value);
         }
+    }
+
+    /// <summary>
+    /// Rejects filter values that make no sense. Shared with the in-memory repositories.
+    /// </summary>
+    public static void ValidateCommonFilters(decimal? minPrice, decimal? maxPrice, int? limit)
+    {
+        if (minPrice < 0)
+            throw new ArgumentOutOfRangeException(nameof(minPrice), minPrice, "Minimum price cannot be negative.");
+
+        if (maxPrice < 0)
+            throw new ArgumentOutOfRangeException(nameof(maxPrice), maxPrice, "Maximum price cannot be negative.");
+
+        if (minPrice > maxPrice)
+            throw new ArgumentException($"Minimum price ({minPrice}) is greater than maximum price ({maxPrice}).", nameof(minPrice));
+
+        if (limit <= 0)
+            throw new ArgumentOutOfRangeException(nameof(limit), limit, "Limit must be greater than 0.");
     }
 }
 

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using CoreMeld.BLL.DTO;
 using CoreMeld.BLL.Exceptions;
 using CoreMeld.BLL.Services;
+using CoreMeld.BLL.Validation;
 using CoreMeld.Domain.Enums;
 using CoreMeld.Domain.Models;
 using CoreMeld.UI.Desktop.Commands;
@@ -13,8 +14,8 @@ public class StartViewModel : ViewModelBase
 {
     private static readonly CultureInfo Ua = new("uk-UA");
 
-    private const decimal MaxBudget = 10_000_000m;
-    private const string BudgetRangeMessage = "Введіть суму від 1 до 10 000 000 грн";
+    private static readonly string BudgetRangeMessage =
+        $"Введіть суму від {BuildRequestLimits.MinBudget.ToString("N0", Ua)} до {BuildRequestLimits.MaxBudget.ToString("N0", Ua)} грн";
     private readonly IConfiguratorEngine _engine;
     private readonly Action<PCBuildDto, decimal> _showResult;
 
@@ -314,6 +315,6 @@ public class StartViewModel : ViewModelBase
         var text = input.Replace(" ", "").Replace(" ", "").Replace(',', '.');
 
         return decimal.TryParse(text, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out budget)
-               && budget is >= 1 and <= MaxBudget;
+               && budget is >= BuildRequestLimits.MinBudget and <= BuildRequestLimits.MaxBudget;
     }
 }

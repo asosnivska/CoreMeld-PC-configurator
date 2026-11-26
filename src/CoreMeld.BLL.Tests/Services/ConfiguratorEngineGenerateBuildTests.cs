@@ -145,7 +145,7 @@ public class ConfiguratorEngineGenerateBuildTests
         var engine = CreateEngine();
 
         await Assert.ThrowsAsync<InvalidOperationException>(
-            () => engine.GenerateBuildAsync(Request(35000m, ramGb: 1000)));
+            () => engine.GenerateBuildAsync(Request(35000m, ramGb: 256)));
     }
 
     [Fact]

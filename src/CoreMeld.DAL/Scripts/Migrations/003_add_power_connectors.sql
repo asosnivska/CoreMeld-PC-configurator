@@ -1,4 +1,4 @@
-﻿BEGIN;
+BEGIN;
 
 ALTER TABLE gpus
     ADD COLUMN IF NOT EXISTS power_connector_type INT

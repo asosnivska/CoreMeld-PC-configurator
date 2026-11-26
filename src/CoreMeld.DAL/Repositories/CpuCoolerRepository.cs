@@ -12,7 +12,7 @@ public class CpuCoolerRepository : ICpuCoolerRepository
     private const string BaseSelect = @"
         SELECT c.id, c.name, c.price, c.brand, c.color, c.image_url, c.category_id,
                cc.fan_rpm, cc.noise_level_db, cc.height_mm, cc.tdp_rating_watts,
-               COALESCE((SELECT socket_id FROM cpu_cooler_sockets ccs WHERE ccs.cooler_id = c.id LIMIT 1), 0) AS socket_id
+               COALESCE((SELECT socket_id FROM cpu_cooler_sockets ccs WHERE ccs.cooler_id = c.id ORDER BY ccs.socket_id LIMIT 1), 0) AS socket_id
         FROM components c
         JOIN cpu_coolers cc ON c.id = cc.component_id";
 
@@ -60,6 +60,9 @@ public class CpuCoolerRepository : ICpuCoolerRepository
 
         await using var command = new NpgsqlCommand();
         command.Connection = connection;
+
+        // TODO: coolingType is ignored: cpu_coolers has no cooling type column yet.
+        // Not an exception, because ConfiguratorEngine passes request.CoolingType.
 
         if (socketId.HasValue)
         {

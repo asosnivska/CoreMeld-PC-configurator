@@ -11,7 +11,7 @@ public class PCCaseRepository : IPCCaseRepository
 
     private const string BaseSelect = @"
         SELECT c.id, c.name, c.price, c.brand, c.color, c.image_url, c.category_id,
-               cs.max_gpu_length_mm, cs.max_cpu_cooler_height_mm
+               cs.max_gpu_length_mm, cs.max_cpu_cooler_height_mm, cs.max_board_form_factor_id
         FROM components c
         JOIN cases cs ON c.id = cs.component_id";
 
@@ -59,6 +59,9 @@ public class PCCaseRepository : IPCCaseRepository
         await using var command = new NpgsqlCommand();
         command.Connection = connection;
 
+        // TODO: supportedMotherboardFormFactorId is ignored. Board sizes live in the BLL
+        // (form-factors.json), so the board-to-case fit is checked by SpaceControlService.
+
         if (minSupportedGpuLengthMm.HasValue)
         {
             sql.Append(" AND cs.max_gpu_length_mm >= @minSupportedGpuLengthMm");
@@ -96,6 +99,7 @@ public class PCCaseRepository : IPCCaseRepository
         RepositoryQueryHelper.PopulateComponent(pcCase, reader);
         pcCase.MaxGpuLengthMm = reader.GetInt32(7);
         pcCase.MaxCpuCoolerHeightMm = reader.GetInt32(8);
+        pcCase.MaxBoardFormFactorId = reader.IsDBNull(9) ? null : reader.GetInt32(9);
         return pcCase;
     }
 }

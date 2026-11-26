@@ -1,4 +1,5 @@
-﻿using CoreMeld.Domain.Models;
+﻿using CoreMeld.DAL.Repositories;
+using CoreMeld.Domain.Models;
 
 namespace CoreMeld.DAL.InMemory;
 
@@ -12,6 +13,8 @@ internal static class ComponentFilters
         string? nameContains,
         int? limit) where T : Component
     {
+        RepositoryQueryHelper.ValidateCommonFilters(minPrice, maxPrice, limit);
+
         var query = source;
 
         if (minPrice.HasValue)
@@ -29,6 +32,9 @@ internal static class ComponentFilters
 
         if (!string.IsNullOrWhiteSpace(nameContains))
             query = query.Where(c => c.Name.Contains(nameContains, StringComparison.OrdinalIgnoreCase));
+
+        // Same order as the SQL repositories: price, then id.
+        query = query.OrderBy(c => c.Price).ThenBy(c => c.Id);
 
         if (limit.HasValue)
             query = query.Take(limit.Value);
