@@ -42,4 +42,9 @@ public class FakeComponentRepository: IComponentRepository
 
         return Task.FromResult(price);
     }
+
+    public Task<IEnumerable<Component>> SearchByNameAsync(string query, int? categoryId = null)
+    {
+        throw new NotImplementedException();
+    }
 }

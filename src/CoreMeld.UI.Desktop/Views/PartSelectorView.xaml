@@ -194,7 +194,8 @@
                 <TextBox Text="{Binding Title, Mode=OneWay}" Style="{StaticResource SelectablePageTitle}"
                          Foreground="White" FontSize="24" VerticalAlignment="Center"/>
 
-                <TextBox Style="{StaticResource FilterBox}" Tag="Пошук" Width="181" Height="33" FontSize="14"
+                <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource FilterBox}" Tag="Пошук" Width="181" Height="33" FontSize="14"
                          HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,40,0"
                          BorderThickness="0"/>
             </Grid>

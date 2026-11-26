@@ -3,6 +3,7 @@ using CoreMeld.BLL.DTO;
 using CoreMeld.BLL.Services;
 using CoreMeld.Domain.Enums;
 using CoreMeld.Domain.Interfaces.Repositories;
+using CoreMeld.Domain.Models;
 using CoreMeld.UI.Desktop.Commands;
 
 namespace CoreMeld.UI.Desktop.ViewModels;
@@ -18,6 +19,9 @@ public class PartSelectorViewModel : ViewModelBase
     private IReadOnlyList<PartItemViewModel> _items = [];
     private bool _isLoading = true;
     private string? _errorMessage;
+    private string _searchText = string.Empty;
+    private int _loadVersion;
+    private CancellationTokenSource? _searchCts;
 
     public PartSelectorViewModel(
         IConfiguratorEngine engine,
@@ -49,6 +53,16 @@ public class PartSelectorViewModel : ViewModelBase
 
     public string Title { get; }
 
+    public string SearchText
+    {
+        get => _searchText;
+        set
+        {
+            if (SetProperty(ref _searchText, value))
+                _ = ReloadAfterDelayAsync();
+        }
+    }
+
     public IReadOnlyList<PartItemViewModel> Items
     {
         get => _items;
@@ -76,14 +90,40 @@ public class PartSelectorViewModel : ViewModelBase
     public RelayCommand BackCommand { get; }
     public RelayCommand SelectCommand { get; }
 
-    private async Task LoadAsync()
+    private async Task ReloadAfterDelayAsync()
     {
+        _searchCts?.Cancel();
+        var cts = new CancellationTokenSource();
+        _searchCts = cts;
+
         try
         {
-            var all = await _components.GetAllAsync();
-            var pool = all.Where(c => c.CategoryId == (int)_category).ToList();
+            await Task.Delay(300, cts.Token);
+            await LoadAsync();
+        }
+        catch (OperationCanceledException)
+        {
+        }
+    }
 
-            var compatible = await _engine.FilterCompatibleComponentsAsync(pool, _build);
+    private async Task LoadAsync()
+    {
+        var version = ++_loadVersion;
+        var search = SearchText.Trim();
+
+        IsLoading = true;
+        ErrorMessage = null;
+
+        try
+        {
+            IEnumerable<Component> pool = search.Length == 0
+                ? (await _components.GetAllAsync()).Where(c => c.CategoryId == (int)_category)
+                : await _components.SearchByNameAsync(search, (int)_category);
+
+            var compatible = await _engine.FilterCompatibleComponentsAsync(pool.ToList(), _build);
+
+            if (version != _loadVersion)
+                return;
 
             var currentId = _build.Components.FirstOrDefault(c => c.Category == _category)?.Id;
 
@@ -94,16 +134,22 @@ public class PartSelectorViewModel : ViewModelBase
                 .ToList();
 
             if (Items.Count == 0)
-                ErrorMessage = "Немає сумісних деталей для цієї категорії";
+            {
+                ErrorMessage = search.Length == 0
+                    ? "Немає сумісних деталей для цієї категорії"
+                    : "Компонент не знайдено";
+            }
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex);
-            ErrorMessage = "Не вдалося завантажити список деталей";
+            if (version == _loadVersion)
+                ErrorMessage = "Не вдалося завантажити список деталей";
         }
         finally
         {
-            IsLoading = false;
+            if (version == _loadVersion)
+                IsLoading = false;
         }
     }
 

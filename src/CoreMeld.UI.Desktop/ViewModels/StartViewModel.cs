@@ -24,7 +24,7 @@ public class StartViewModel : ViewModelBase
     private OptionItem<int?> _selectedStorageCapacity;
     private OptionItem<CoolingType?> _selectedCooling;
     private OptionItem<string?> _selectedColor;
-    private bool _requireWifi = true;
+    private bool _requireWifi = false;
     private OptionItem<int?> _selectedRam;
 
     private string? _errorMessage;
@@ -250,8 +250,7 @@ public class StartViewModel : ViewModelBase
            .Select(c => c.Task)
            .ToList();
 
-        var category = SelectedCategory.Value ?? PickCategory(tasks);
-        if (category is null)
+        if (SelectedCategory.Value is null && tasks.Count == 0)
         {
             ErrorMessage = "Оберіть категорію або хоча б одну задачу";
             return;
@@ -263,7 +262,7 @@ public class StartViewModel : ViewModelBase
             RequireWifi: RequireWifi ? true : null,
             StorageType: SelectedStorageType.Value,
             CoolingType: SelectedCooling.Value,
-            Category: category,
+            Category: SelectedCategory.Value,
             Priorities: tasks.Count > 0 ? tasks : null,
             RequestedRamGb: SelectedRam.Value,
             RequestedStorageGb: SelectedStorageCapacity.Value);

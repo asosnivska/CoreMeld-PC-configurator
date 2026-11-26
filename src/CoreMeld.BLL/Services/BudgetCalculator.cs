@@ -89,35 +89,5 @@ public class BudgetCalculator: IBudgetCalculator
 
         return new ReadOnlyDictionary<ComponentCategory, decimal>(amounts);
     }
-
-    public async Task<ThresholdResult> CheckThresholdAsync(decimal budget, IReadOnlyCollection<Category> categories)
-    {
-        if (budget <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(budget), budget, "Бюджет має бути більшим за 0.");
-        }
-
-        var weights = GetMaxWeights(categories);
-
-        var minimumBudget = 0m;
-        foreach (var (component, weight) in weights)
-        {
-            if (weight == 0m)
-            {
-                continue;
-            }
-
-            var minPrice = await _componentRepository.GetMinPriceAsync(component);
-            if (minPrice is null)
-            {
-                throw new InvalidOperationException($"У базі немає жодної деталі категорії {component}.");
-            }
-
-            minimumBudget += minPrice.Value;
-        }
-
-        var shortfall = Math.Max(0m, minimumBudget - budget);
-        return new ThresholdResult(shortfall == 0m, minimumBudget, shortfall);
-
-    }
+    
 }

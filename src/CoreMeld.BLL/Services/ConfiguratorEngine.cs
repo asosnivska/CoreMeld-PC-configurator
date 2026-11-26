@@ -64,253 +64,249 @@ public class ConfiguratorEngine:IConfiguratorEngine
             throw new ArgumentException("Бюджет має бути більшим за 0.", nameof(request));
         }
 
-        if (request.Category is null)
+        var categories = ResolveCategories(request);
+
+        var limits = _budgetCalculator.CalculateAllocation(request.Budget, categories);
+        var needGpu = limits[ComponentCategory.Gpu] > 0m;
+
+        var cache = new QueryCache();
+        var attempts = new IReadOnlyDictionary<ComponentCategory, decimal>?[] { limits, null };
+
+        decimal? cheapestTotal = null;
+
+        foreach (var attemptLimits in attempts)
+        {
+            var cpus = await GetCpuCandidatesAsync(!needGpu, attemptLimits?[ComponentCategory.Cpu], cache);
+
+            foreach (var cpu in cpus)
+            {
+                var build = await TryBuildAroundCpuAsync(cpu, request, needGpu, attemptLimits, cache);
+                if (build is null)
+                {
+                    continue;
+                }
+
+                var total = CalculateTotalPrice(build);
+                if (total <= request.Budget)
+                {
+                    return CreateBuildDto(build);
+                }
+
+                if (cheapestTotal is null || total < cheapestTotal)
+                {
+                    cheapestTotal = total;
+                }
+            }
+        }
+
+        if (cheapestTotal is null)
+        {
+            throw new InvalidOperationException("Не вдалося підібрати сумісну збірку.");
+        }
+
+        throw new InsufficientBudgetException(
+            new ThresholdResult(false, cheapestTotal.Value, cheapestTotal.Value - request.Budget));
+    }
+
+    private async Task<IReadOnlyList<Cpu>> GetCpuCandidatesAsync(
+        bool requireIntegratedGpu, decimal? limit, QueryCache cache)
+    {
+        var cpus = await cache.GetAsync(
+            $"cpus:{requireIntegratedGpu}",
+            async () => (await _cpuRepository.GetByFilterAsync(
+                hasIntegratedGpu: requireIntegratedGpu ? true : null)).ToList());
+
+        return OrderByPreference(cpus, limit).ToList();
+    }
+
+    private async Task<PCBuild?> TryBuildAroundCpuAsync(
+        Cpu cpu,
+        BuildRequestDto request,
+        bool needGpu,
+        IReadOnlyDictionary<ComponentCategory, decimal>? limits,
+        QueryCache cache)
+    {
+        decimal? LimitFor(ComponentCategory category) => limits?[category];
+
+        var storageTypes = request.StorageType is null ? null : new[] { request.StorageType.Value };
+
+        var storage = PickByLimit(
+            await cache.GetAsync(
+                $"storage:{request.StorageType}:{request.RequestedStorageGb}",
+                async () => (await _storageRepository.GetByFilterAsync(
+                    driveType: storageTypes, capacityGb: request.RequestedStorageGb)).ToList()),
+            LimitFor(ComponentCategory.Storage));
+        if (storage is null)
+        {
+            return null;
+        }
+
+        var cooler = PickByLimit(
+            await cache.GetAsync(
+                $"cooler:{cpu.SocketId}:{cpu.TdpWatts}:{request.CoolingType}",
+                async () => (await _coolerRepository.GetByFilterAsync(
+                    socketId: cpu.SocketId, minTdpRatingWatts: cpu.TdpWatts,
+                    coolingType: request.CoolingType)).ToList()),
+            LimitFor(ComponentCategory.CpuCooler));
+        if (cooler is null)
+        {
+            return null;
+        }
+
+        var boards = OrderByPreference(
+                await cache.GetAsync(
+                    $"boards:{cpu.SocketId}:{request.RequireWifi == true}",
+                    async () => (await _motherboardRepository.GetByFilterAsync(
+                        socketId: cpu.SocketId, hasWifi: request.RequireWifi == true ? true : null)).ToList()),
+                LimitFor(ComponentCategory.Motherboard))
+            .ToList();
+        if (boards.Count == 0)
+        {
+            return null;
+        }
+
+        IReadOnlyList<Gpu?> gpus = needGpu
+            ? OrderByPreference(
+                    await cache.GetAsync("gpus", async () => (await _gpuRepository.GetByFilterAsync()).ToList()),
+                    LimitFor(ComponentCategory.Gpu))
+                .Select(g => (Gpu?)g)
+                .ToList()
+            : new Gpu?[] { null };
+
+        PCBuild? best = null;
+        var bestTotal = 0m;
+
+        foreach (var gpu in gpus)
+        {
+            var totalTdp = _tdpCalculator.CalculateTotalTdp(cpu, gpu);
+            var requiredWattage = _tdpCalculator.GetRecommendedPsuWattage(totalTdp);
+
+            bool IsPsuUsable(PowerSupply psu) =>
+                psu.Wattage >= requiredWattage
+                && (gpu is null || (psu.Pcie8PinCount is not null && psu.Has12Vhpwr is not null))
+                && _compatibilityChecker.IsPowerConnectorCompatible(gpu, psu);
+
+            var powerSupply = PickByLimit(
+                (await cache.GetAsync(
+                    $"psu:{requiredWattage}",
+                    async () => (await _powerSupplyRepository.GetByFilterAsync(wattage: requiredWattage)).ToList()))
+                .Where(IsPsuUsable),
+                LimitFor(ComponentCategory.PowerSupply));
+            if (powerSupply is null)
+            {
+                continue;
+            }
+
+            var cases = await cache.GetAsync(
+                $"cases:{gpu?.LengthMm}:{cooler.HeightMm}:{request.PreferredColor}",
+                async () => (await _caseRepository.GetByFilterAsync(
+                    minSupportedGpuLengthMm: gpu?.LengthMm,
+                    minSupportedCoolerHeightMm: cooler.HeightMm,
+                    color: request.PreferredColor)).ToList());
+
+            foreach (var board in boards)
+            {
+                var ram = PickByLimit(
+                    (await cache.GetAsync(
+                        $"ram:{board.MemoryType}:{request.RequestedRamGb}:{board.MemorySlots}",
+                        async () => (await _ramRepository.GetByFilterAsync(
+                            memoryType: new[] { board.MemoryType },
+                            minCapacityGb: request.RequestedRamGb,
+                            maxModuleCount: board.MemorySlots)).ToList()))
+                    .Where(x => _compatibilityChecker.IsRamCompatible(x, board)),
+                    LimitFor(ComponentCategory.Ram));
+                if (ram is null)
+                {
+                    continue;
+                }
+
+                var pcCase = PickByLimit(
+                    cases.Where(x => x.MaxBoardFormFactorId is not null
+                                     && _spaceControlService.FitsInCase(x, board, gpu, cooler)),
+                    LimitFor(ComponentCategory.Case));
+                if (pcCase is null)
+                {
+                    continue;
+                }
+
+                var candidate = new PCBuild
+                {
+                    Cpu = cpu,
+                    Motherboard = board,
+                    Ram = ram,
+                    Gpu = gpu,
+                    Storage = storage,
+                    CpuCooler = cooler,
+                    Case = pcCase,
+                    PowerSupply = powerSupply
+                };
+
+                if (limits is not null)
+                {
+                    return candidate;
+                }
+
+                var total = CalculateTotalPrice(candidate);
+                if (best is null || total < bestTotal)
+                {
+                    best = candidate;
+                    bestTotal = total;
+                }
+            }
+        }
+
+        return best;
+    }
+
+    private static Category[] ResolveCategories(BuildRequestDto request)
+    {
+        var result = new List<Category>();
+
+        if (request.Priorities is not null && request.Priorities.Any())
+        {
+            result.AddRange(UserTaskCategoryMapper.ToCategories(request.Priorities));
+        }
+
+        if (request.Category is not null)
+        {
+            result.Add(request.Category.Value);
+        }
+
+        if (result.Count == 0)
         {
             throw new ArgumentException("Категорію ПК не вказано.", nameof(request));
         }
 
-        var categories = new[] { request.Category.Value };
-
-        var threshold = await _budgetCalculator.CheckThresholdAsync(request.Budget, categories);
-        if (!threshold.IsSufficient)
-        {
-            throw new InsufficientBudgetException(threshold);
-        }
-
-        var limits = _budgetCalculator.CalculateAllocation(request.Budget, categories);
-
-        var needIntegratedGpu = limits[ComponentCategory.Gpu] == 0m;
-
-        var cpuCandidates = await _cpuRepository.GetByFilterAsync(
-            hasIntegratedGpu: needIntegratedGpu ? true : null,
-            maxPrice: limits[ComponentCategory.Cpu]);
-
-        var cpu = cpuCandidates
-            .OrderByDescending(x => x.Price)
-            .ThenBy(x => x.Id)
-            .FirstOrDefault();
-
-        if (cpu is null)
-        {
-            var allCpus = await _cpuRepository.GetByFilterAsync(
-                hasIntegratedGpu: needIntegratedGpu ? true : null);
-
-            cpu = allCpus
-                      .OrderBy(x => x.Price)
-                      .ThenBy(x => x.Id)
-                      .FirstOrDefault()
-                  ?? throw new InvalidOperationException("Не вдалося підібрати процесор.");
-        }
-
-        var motherBoardCandidates = await _motherboardRepository.GetByFilterAsync(
-            socketId: cpu.SocketId,
-            maxPrice: limits[ComponentCategory.Motherboard],
-            hasWifi: request.RequireWifi == true ? true : null);
-
-        var motherboard = motherBoardCandidates
-            .OrderByDescending(x => x.Price)
-            .ThenBy(x => x.Id)
-            .FirstOrDefault();
-
-        if (motherboard is null)
-        {
-            var allmotherboard = await _motherboardRepository.GetByFilterAsync(
-                socketId: cpu.SocketId,
-                hasWifi: request.RequireWifi == true ? true : null);
-
-            motherboard = allmotherboard
-                              .OrderBy(x => x.Price)
-                              .ThenBy(x => x.Id)
-                              .FirstOrDefault()
-                          ?? throw new InvalidOperationException("Не вдалося підібрати материнську плату.");
-        }
-
-        var ramCandidates = await _ramRepository.GetByFilterAsync(
-            memoryType: new[] { motherboard.MemoryType },
-            minCapacityGb: request.RequestedRamGb,
-            maxModuleCount: motherboard.MemorySlots,
-            maxPrice: limits[ComponentCategory.Ram]);
-
-        var ram = ramCandidates
-            .Where(x => _compatibilityChecker.IsRamCompatible(x, motherboard))
-            .OrderByDescending(x => x.Price)
-            .ThenBy(x => x.Id)
-            .FirstOrDefault();
-
-        if (ram is null)
-        {
-            var allRam = await _ramRepository.GetByFilterAsync(
-                memoryType: new[] { motherboard.MemoryType },
-                minCapacityGb: request.RequestedRamGb,
-                maxModuleCount: motherboard.MemorySlots);
-
-            ram = allRam
-                      .Where(x => _compatibilityChecker.IsRamCompatible(x, motherboard))
-                      .OrderBy(x => x.Price)
-                      .ThenBy(x => x.Id)
-                      .FirstOrDefault()
-                  ?? throw new InvalidOperationException("Не вдалося підібрати ОЗП.");
-        }
-
-
-        Gpu? gpu = null;
-
-        if (limits[ComponentCategory.Gpu] > 0m)
-        {
-            var gpuCandidates = await _gpuRepository.GetByFilterAsync(
-                maxPrice: limits[ComponentCategory.Gpu]);
-
-            gpu = gpuCandidates
-                .OrderByDescending(x => x.Price)
-                .ThenBy(x => x.Id)
-                .FirstOrDefault();
-
-            if (gpu is null)
-            {
-                var allGpus = await _gpuRepository.GetByFilterAsync();
-
-                gpu = allGpus
-                          .OrderBy(x => x.Price)
-                          .ThenBy(x => x.Id)
-                          .FirstOrDefault()
-                      ?? throw new InvalidOperationException("Не вдалося підібрати відеокарту.");
-            }
-        }
-
-        var storageTypes = request.StorageType is null
-            ? null
-            : new[] { request.StorageType.Value };
-
-        var storageCandidates = await _storageRepository.GetByFilterAsync(
-            driveType: storageTypes,
-            capacityGb: request.RequestedStorageGb,
-            maxPrice: limits[ComponentCategory.Storage]);
-
-        var storage = storageCandidates
-            .OrderByDescending(x => x.Price)
-            .ThenBy(x => x.Id)
-            .FirstOrDefault();
-
-        if (storage is null)
-        {
-            var allStorage = await _storageRepository.GetByFilterAsync(
-                driveType: storageTypes,
-                capacityGb: request.RequestedStorageGb);
-
-            storage = allStorage
-                          .OrderBy(x => x.Price)
-                          .ThenBy(x => x.Id)
-                          .FirstOrDefault()
-                      ?? throw new InvalidOperationException("Не вдалося підібрати накопичувач.");
-        }
-
-        var coolerCandidates = await _coolerRepository.GetByFilterAsync(
-            socketId: cpu.SocketId,
-            minTdpRatingWatts: cpu.TdpWatts,
-            coolingType: request.CoolingType,
-            maxPrice: limits[ComponentCategory.CpuCooler]);
-
-        var cooler = coolerCandidates
-            .OrderByDescending(x => x.Price)
-            .ThenBy(x => x.Id)
-            .FirstOrDefault();
-
-        if (cooler is null)
-        {
-            var allCoolers = await _coolerRepository.GetByFilterAsync(
-                socketId: cpu.SocketId,
-                minTdpRatingWatts: cpu.TdpWatts,
-                coolingType: request.CoolingType);
-
-            cooler = allCoolers
-                         .OrderBy(x => x.Price)
-                         .ThenBy(x => x.Id)
-                         .FirstOrDefault()
-                     ?? throw new InvalidOperationException("Не вдалося підібрати кулер.");
-        }
-
-        var caseCandidates = await _caseRepository.GetByFilterAsync(
-            minSupportedGpuLengthMm: gpu?.LengthMm,
-            minSupportedCoolerHeightMm: cooler.HeightMm,
-            color: request.PreferredColor,
-            maxPrice: limits[ComponentCategory.Case]);
-
-        var pcCase = caseCandidates
-            .Where(x => x.MaxBoardFormFactorId is not null
-                                               && _spaceControlService.FitsInCase(x, motherboard, gpu, cooler))
-            .OrderByDescending(x => x.Price)
-            .ThenBy(x => x.Id)
-            .FirstOrDefault();
-
-        if (pcCase is null)
-        {
-            var allCases = await _caseRepository.GetByFilterAsync(
-                minSupportedGpuLengthMm: gpu?.LengthMm,
-                minSupportedCoolerHeightMm: cooler.HeightMm,
-                color: request.PreferredColor);
-
-            pcCase = allCases
-                         .Where(x => x.MaxBoardFormFactorId is not null
-                                     && _spaceControlService.FitsInCase(x, motherboard, gpu, cooler))
-                         .OrderBy(x => x.Price)
-                         .ThenBy(x => x.Id)
-                         .FirstOrDefault()
-                     ?? throw new InvalidOperationException("Не вдалося підібрати корпус.");
-        }
-
-        var totalTdp = _tdpCalculator.CalculateTotalTdp(cpu, gpu);
-        var requiredWattage = _tdpCalculator.GetRecommendedPsuWattage(totalTdp);
-
-        bool IsPsuUsable(PowerSupply psu) =>
-            psu.Wattage >= requiredWattage
-            && (gpu is null || (psu.Pcie8PinCount is not null && psu.Has12Vhpwr is not null))
-            && _compatibilityChecker.IsPowerConnectorCompatible(gpu, psu);
-
-        var psuCandidates = await _powerSupplyRepository.GetByFilterAsync(
-            wattage: requiredWattage,
-            maxPrice: limits[ComponentCategory.PowerSupply]);
-
-        var powerSupply = psuCandidates
-            .Where(IsPsuUsable)
-            .OrderByDescending(x => x.Price)
-            .ThenBy(x => x.Id)
-            .FirstOrDefault();
-
-        if (powerSupply is null)
-        {
-            var allPsu = await _powerSupplyRepository.GetByFilterAsync(wattage: requiredWattage);
-
-            powerSupply = allPsu
-                              .Where(IsPsuUsable)
-                              .OrderBy(x => x.Price)
-                              .ThenBy(x => x.Id)
-                              .FirstOrDefault()
-                          ?? throw new InvalidOperationException("Не вдалося підібрати блок живлення.");
-        }
-
-        var build = new PCBuild
-        {
-            Cpu = cpu,
-            Case = pcCase,
-            CpuCooler = cooler,
-            Gpu = gpu,
-            Motherboard = motherboard,
-            PowerSupply = powerSupply,
-            Ram = ram,
-            Storage = storage
-        };
-
-        var totalPrice = CalculateTotalPrice(build);
-
-        if (totalPrice > request.Budget)
-        {
-            var thresholdResult = new ThresholdResult(false, totalPrice, totalPrice - request.Budget);
-            throw new InsufficientBudgetException(thresholdResult);
-        }
-
-        return CreateBuildDto(build);
+        return result.Distinct().ToArray();
     }
 
+    private static T? PickByLimit<T>(IEnumerable<T> candidates, decimal? limit) where T : Component
+        => OrderByPreference(candidates, limit).FirstOrDefault();
+
+    private static IEnumerable<T> OrderByPreference<T>(IEnumerable<T> items, decimal? limit) where T : Component
+        => limit is null
+            ? items.OrderBy(x => x.Price).ThenBy(x => x.Id)
+            : items
+                .OrderBy(x => x.Price > limit ? 1 : 0)
+                .ThenBy(x => x.Price <= limit ? -x.Price : x.Price)
+                .ThenBy(x => x.Id);
+
+    private sealed class QueryCache
+    {
+        private readonly Dictionary<string, object> _items = new();
+
+        public async Task<T> GetAsync<T>(string key, Func<Task<T>> load)
+        {
+            if (_items.TryGetValue(key, out var cached))
+            {
+                return (T)cached;
+            }
+
+            var value = await load();
+            _items[key] = value!;
+            return value;
+        }
+    }
     public IReadOnlyList<Component> FilterCompatibleComponents(IEnumerable<Component> pool, PCBuild currentBuild)
     {
         ArgumentNullException.ThrowIfNull(pool);

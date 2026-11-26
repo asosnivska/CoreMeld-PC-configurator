@@ -23,4 +23,6 @@ public interface IComponentRepository
         int? categoryId = null,
         int? limit = null)
         => Task.FromResult<IEnumerable<Component>>(Enumerable.Empty<Component>());
+    
+    Task<IEnumerable<Component>> SearchByNameAsync(string query, int? categoryId = null);
 }
